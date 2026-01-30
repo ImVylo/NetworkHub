@@ -1,0 +1,26 @@
+{
+  "enabled": true,
+  "host": "localhost",
+  "port": 6379,
+  "password": null,
+  "database": 0,
+  "pool": {
+    "maxTotal": 20,
+    "maxIdle": 10,
+    "minIdle": 5,
+    "testOnBorrow": true,
+    "testOnReturn": false,
+    "testWhileIdle": true
+  },
+  "channels": {
+    "playerJoin": "hytale:player:join",
+    "playerQuit": "hytale:player:quit",
+    "chatMessage": "hytale:chat:global",
+    "staffChat": "hytale:chat:staff",
+    "directMessage": "hytale:chat:dm",
+    "serverStatus": "hytale:server:status",
+    "transferRequest": "hytale:transfer:request",
+    "announcement": "hytale:announcement",
+    "moderation": "hytale:moderation"
+  }
+}

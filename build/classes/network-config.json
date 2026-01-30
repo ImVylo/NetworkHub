@@ -1,0 +1,92 @@
+{
+  "server": {
+    "serverId": "game-01",
+    "serverName": "Game Server 1",
+    "serverType": "GAME",
+    "isHub": false,
+    "hubPriority": 0,
+    "maxPlayers": 100
+  },
+  "heartbeat": {
+    "intervalSeconds": 10,
+    "timeoutSeconds": 30,
+    "failureThreshold": 3
+  },
+  "fallback": {
+    "enabled": true,
+    "triggerOnShutdown": true,
+    "transferDelaySeconds": 1
+  },
+  "teleporter": {
+    "confirmationTimeoutSeconds": 10,
+    "cooldownSeconds": 5
+  },
+  "queue": {
+    "enabled": true,
+    "maxQueueSize": 100,
+    "processIntervalSeconds": 2,
+    "autoJoinOnFull": true,
+    "notifyPosition": true,
+    "vipPriority": 100,
+    "defaultPriority": 0
+  },
+  "messaging": {
+    "enabled": true,
+    "globalChatEnabled": true,
+    "staffChatEnabled": true,
+    "directMessagingEnabled": true,
+    "persistChatHistory": false,
+    "chatHistoryDays": 7
+  },
+  "redis": {
+    "enabled": true,
+    "reconnectAttempts": 5,
+    "reconnectDelaySeconds": 5
+  },
+  "gui": {
+    "enabled": true,
+    "serverSelectorCommand": "servers",
+    "adminPanelCommand": "networkgui",
+    "allowPlayerServerSelection": true,
+    "showPlayerCounts": true,
+    "showServerStatus": true,
+    "refreshIntervalSeconds": 5
+  },
+  "announcements": {
+    "enabled": true,
+    "maxDurationSeconds": 300,
+    "defaultDurationSeconds": 10,
+    "allowSounds": true,
+    "requirePermission": true,
+    "logToDatabase": true
+  },
+  "hud": {
+    "enabled": true,
+    "hubOnly": true,
+    "updateIntervalSeconds": 2,
+    "displayLines": [
+      "network_name",
+      "separator",
+      "total_players",
+      "server_list",
+      "separator",
+      "server_health",
+      "queue_info",
+      "blank",
+      "your_server"
+    ],
+    "showServerHealth": true,
+    "showPlayerDistribution": true,
+    "showQueueCounts": true,
+    "showNotifications": true,
+    "compactMode": false
+  },
+  "moderation": {
+    "enabled": true,
+    "syncBans": true,
+    "syncKicks": true,
+    "syncMutes": true,
+    "banDurationHours": 24,
+    "logToDatabase": true
+  }
+}

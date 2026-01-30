@@ -26,10 +26,20 @@ public class DatabaseManager {
     public void initialize() throws SQLException {
         logger.at(Level.INFO).log("Initializing database connection pool...");
 
+        // Load JDBC driver explicitly
+        String driverClass = getDriverClass(config.getConfig().type);
+        try {
+            Class.forName(driverClass);
+            logger.at(Level.INFO).log("Loaded JDBC driver: " + driverClass);
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Failed to load JDBC driver: " + driverClass, e);
+        }
+
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(config.getJdbcUrl());
         hikariConfig.setUsername(config.getConfig().username);
         hikariConfig.setPassword(config.getConfig().password);
+        hikariConfig.setDriverClassName(driverClass);
 
         DatabaseConfig.ConnectionPoolConfig poolConfig = config.getConfig().connectionPool;
         hikariConfig.setMinimumIdle(poolConfig.minimumIdle);
@@ -102,6 +112,21 @@ public class DatabaseManager {
     public boolean isMySQL() {
         String dbType = config.getConfig().type.toLowerCase();
         return dbType.equals("mysql") || dbType.equals("mariadb");
+    }
+
+    private String getDriverClass(String dbType) {
+        String type = dbType.toLowerCase();
+        switch (type) {
+            case "postgresql":
+            case "postgres":
+                return "org.postgresql.Driver";
+            case "mysql":
+                return "com.mysql.cj.jdbc.Driver";
+            case "mariadb":
+                return "org.mariadb.jdbc.Driver";
+            default:
+                throw new IllegalArgumentException("Unsupported database type: " + dbType);
+        }
     }
 
     public void close() {
