@@ -261,15 +261,61 @@ public class NetworkHub extends JavaPlugin {
     // === Command and Listener Registration ===
 
     private void registerCommands() {
-        // TODO: Implement command wrappers for Hytale's command system
-        // Commands need to extend AbstractCommand or AbstractCommandCollection
-        getLogger().at(Level.WARNING).log("Command registration not yet implemented - commands will not work");
+        try {
+            // Register working commands
+            getCommandRegistry().registerCommand(new com.hytale.networkhub.commands.ServersCommand(
+                null // TODO: Pass ServerSelectorGUI when GUI system is implemented
+            ));
+
+            getCommandRegistry().registerCommand(new com.hytale.networkhub.commands.NetworkGUICommand(
+                null // TODO: Pass AdminPanelGUI when GUI system is implemented
+            ));
+
+            getCommandRegistry().registerCommand(new com.hytale.networkhub.commands.WhereIsCommand(
+                playerTrackingManager
+            ));
+
+            getLogger().at(Level.INFO).log("Registered 3 basic commands (GUIs not yet implemented)");
+            getLogger().at(Level.WARNING).log("Advanced commands (network, queue, messaging) not yet implemented");
+        } catch (Exception e) {
+            getLogger().at(Level.SEVERE).withCause(e).log("Failed to register commands");
+        }
     }
 
     private void registerListeners() {
-        // TODO: Implement event listener registration
-        // Use getEventRegistry().register() or registerGlobal()
-        getLogger().at(Level.WARNING).log("Event listener registration not yet implemented - listeners will not work");
+        try {
+            // Create listener instances
+            com.hytale.networkhub.listeners.PlayerJoinListener joinListener =
+                new com.hytale.networkhub.listeners.PlayerJoinListener(
+                    getLogger(), playerTrackingManager, redisManager, gson,
+                    config.getConfig().server.serverId
+                );
+
+            com.hytale.networkhub.listeners.PlayerQuitListener quitListener =
+                new com.hytale.networkhub.listeners.PlayerQuitListener(
+                    getLogger(), playerTrackingManager, redisManager,
+                    config.getConfig().server.serverId
+                );
+
+            // Register event handlers
+            getEventRegistry().registerGlobal(
+                com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent.class,
+                event -> joinListener.onPlayerJoin(event.getPlayer())
+            );
+
+            getEventRegistry().registerGlobal(
+                com.hypixel.hytale.server.core.event.events.player.PlayerDisconnectEvent.class,
+                event -> quitListener.onPlayerQuit(event.getPlayerRef())
+            );
+
+            getLogger().at(Level.INFO).log("Registered player join/quit listeners");
+
+            // TODO: Register other listeners (chat, teleporter, shutdown)
+            getLogger().at(Level.WARNING).log("Chat and teleporter listeners not yet registered");
+
+        } catch (Exception e) {
+            getLogger().at(Level.SEVERE).withCause(e).log("Failed to register event listeners");
+        }
     }
 
     private void subscribeToRedisChannels() {

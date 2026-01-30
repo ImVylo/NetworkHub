@@ -2,7 +2,7 @@ package com.hytale.networkhub.listeners;
 
 import com.hytale.networkhub.managers.PlayerTrackingManager;
 import com.hytale.networkhub.redis.RedisManager;
-import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.Message;
 
 import java.util.HashMap;
@@ -24,23 +24,23 @@ public class PlayerQuitListener {
         this.serverId = serverId;
     }
 
-    public void onPlayerQuit(Player player) {
+    public void onPlayerQuit(PlayerRef playerRef) {
         try {
             // Update last seen in database
-            trackingManager.trackQuit(player.getPlayerRef().getUuid());
+            trackingManager.trackQuit(playerRef.getUuid());
 
             // Publish to Redis
             if (redisManager.isEnabled()) {
                 Map<String, Object> message = new HashMap<>();
-                message.put("playerUuid", player.getPlayerRef().getUuid().toString());
-                message.put("playerName", player.getPlayerRef().getUsername());
+                message.put("playerUuid", playerRef.getUuid().toString());
+                message.put("playerName", playerRef.getUsername());
                 message.put("serverId", serverId);
                 message.put("timestamp", System.currentTimeMillis());
 
                 redisManager.publish(redisManager.getChannel("playerQuit"), message);
             }
 
-            logger.at(Level.FINE).log("Player quit: " + player.getPlayerRef().getUsername());
+            logger.at(Level.FINE).log("Player quit: " + playerRef.getUsername());
 
         } catch (Exception e) {
             logger.at(Level.SEVERE).log("Error handling player quit: " + e.getMessage());
