@@ -10,17 +10,18 @@ import redis.clients.jedis.JedisPubSub;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class RedisManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final RedisConfig config;
     private final Gson gson;
     private JedisPool jedisPool;
     private final Map<String, JedisPubSub> subscribers = new ConcurrentHashMap<>();
     private final Map<String, Thread> subscriberThreads = new ConcurrentHashMap<>();
 
-    public RedisManager(Logger logger, RedisConfig config, Gson gson) {
+    public RedisManager(HytaleLogger logger, RedisConfig config, Gson gson) {
         this.logger = logger;
         this.config = config;
         this.gson = gson;
@@ -28,11 +29,11 @@ public class RedisManager {
 
     public void initialize() {
         if (!config.getConfig().enabled) {
-            logger.info("Redis is disabled in config");
+            logger.at(Level.INFO).log("Redis is disabled in config");
             return;
         }
 
-        logger.info("Initializing Redis connection...");
+        logger.at(Level.INFO).log("Initializing Redis connection...");
 
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         RedisConfig.PoolConfig pool = config.getConfig().pool;
@@ -63,9 +64,9 @@ public class RedisManager {
         // Test connection
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.ping();
-            logger.info("Redis connection successful");
+            logger.at(Level.INFO).log("Redis connection successful");
         } catch (Exception e) {
-            logger.severe("Failed to connect to Redis: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to connect to Redis: " + e.getMessage());
             throw new RuntimeException("Redis connection failed", e);
         }
     }
@@ -77,7 +78,7 @@ public class RedisManager {
             String json = gson.toJson(message);
             jedis.publish(channel, json);
         } catch (Exception e) {
-            logger.warning("Failed to publish to Redis channel " + channel + ": " + e.getMessage());
+            logger.at(Level.WARNING).log("Failed to publish to Redis channel " + channel + ": " + e.getMessage());
         }
     }
 
@@ -90,19 +91,19 @@ public class RedisManager {
                 try {
                     handler.accept(message);
                 } catch (Exception e) {
-                    logger.severe("Error handling Redis message on channel " + ch + ": " + e.getMessage());
+                    logger.at(Level.SEVERE).log("Error handling Redis message on channel " + ch + ": " + e.getMessage());
                     e.printStackTrace();
                 }
             }
 
             @Override
             public void onSubscribe(String channel, int subscribedChannels) {
-                logger.info("Subscribed to Redis channel: " + channel);
+                logger.at(Level.INFO).log("Subscribed to Redis channel: " + channel);
             }
 
             @Override
             public void onUnsubscribe(String channel, int subscribedChannels) {
-                logger.info("Unsubscribed from Redis channel: " + channel);
+                logger.at(Level.INFO).log("Unsubscribed from Redis channel: " + channel);
             }
         };
 
@@ -110,7 +111,7 @@ public class RedisManager {
             try (Jedis jedis = jedisPool.getResource()) {
                 jedis.subscribe(pubSub, channel);
             } catch (Exception e) {
-                logger.severe("Redis subscription error on channel " + channel + ": " + e.getMessage());
+                logger.at(Level.SEVERE).log("Redis subscription error on channel " + channel + ": " + e.getMessage());
             }
         }, "Redis-Sub-" + channel);
 
@@ -142,7 +143,7 @@ public class RedisManager {
     }
 
     public void close() {
-        logger.info("Closing Redis connections...");
+        logger.at(Level.INFO).log("Closing Redis connections...");
 
         // Unsubscribe from all channels
         subscribers.forEach((channel, pubSub) -> {
@@ -156,7 +157,7 @@ public class RedisManager {
 
         if (jedisPool != null && !jedisPool.isClosed()) {
             jedisPool.close();
-            logger.info("Redis connection pool closed");
+            logger.at(Level.INFO).log("Redis connection pool closed");
         }
     }
 }

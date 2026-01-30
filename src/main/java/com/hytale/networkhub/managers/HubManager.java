@@ -4,14 +4,15 @@ import com.hytale.networkhub.database.DatabaseManager;
 import com.hytale.networkhub.database.models.ServerRecord;
 
 import java.util.List;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class HubManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final ServerRegistryManager registryManager;
 
-    public HubManager(Logger logger, DatabaseManager dbManager, ServerRegistryManager registryManager) {
+    public HubManager(HytaleLogger logger, DatabaseManager dbManager, ServerRegistryManager registryManager) {
         this.logger = logger;
         this.dbManager = dbManager;
         this.registryManager = registryManager;
@@ -22,7 +23,7 @@ public class HubManager {
         int rows = dbManager.executeUpdate(sql, priority, serverId);
 
         if (rows > 0) {
-            logger.info("Set server " + serverId + " as hub with priority " + priority);
+            logger.at(Level.INFO).log("Set server " + serverId + " as hub with priority " + priority);
         }
     }
 
@@ -31,7 +32,7 @@ public class HubManager {
         int rows = dbManager.executeUpdate(sql, serverId);
 
         if (rows > 0) {
-            logger.info("Removed hub designation from server " + serverId);
+            logger.at(Level.INFO).log("Removed hub designation from server " + serverId);
         }
     }
 
@@ -51,12 +52,12 @@ public class HubManager {
         List<ServerRecord> hubs = getAvailableHubs();
 
         if (hubs.isEmpty()) {
-            logger.severe("No available hub servers found for fallback!");
+            logger.at(Level.SEVERE).log("No available hub servers found for fallback!");
 
             // Try to find ANY online server as last resort
             List<ServerRecord> anyServer = registryManager.getOnlineServers();
             if (!anyServer.isEmpty()) {
-                logger.warning("Using non-hub server as fallback: " + anyServer.get(0).getServerName());
+                logger.at(Level.WARNING).log("Using non-hub server as fallback: " + anyServer.get(0).getServerName());
                 return anyServer.get(0);
             }
 
@@ -64,7 +65,7 @@ public class HubManager {
         }
 
         ServerRecord selectedHub = hubs.get(0);
-        logger.info("Selected fallback hub: " + selectedHub.getServerName() +
+        logger.at(Level.INFO).log("Selected fallback hub: " + selectedHub.getServerName() +
                    " (Priority: " + selectedHub.getHubPriority() +
                    ", Players: " + selectedHub.getCurrentPlayers() + "/" + selectedHub.getMaxPlayers() + ")");
 

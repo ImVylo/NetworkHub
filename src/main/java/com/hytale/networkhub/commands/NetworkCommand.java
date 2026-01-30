@@ -7,21 +7,21 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * Main network administration command
  * Routes to various subcommands for network management
  */
 public class NetworkCommand {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final ServerRegistryManager registryManager;
     private final HubManager hubManager;
     private final TransferManager transferManager;
     private final PlayerTrackingManager trackingManager;
 
-    public NetworkCommand(Logger logger, NetworkConfig config, ServerRegistryManager registryManager,
+    public NetworkCommand(HytaleLogger logger, NetworkConfig config, ServerRegistryManager registryManager,
                          HubManager hubManager, TransferManager transferManager,
                          PlayerTrackingManager trackingManager) {
         this.logger = logger;
@@ -81,7 +81,7 @@ public class NetworkCommand {
                 return reloadConfig(player);
 
             default:
-                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand);
+                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand));
                 sendHelp(player);
                 return true;
         }
@@ -113,7 +113,7 @@ public class NetworkCommand {
         List<ServerRecord> servers = registryManager.getAllServers();
 
         player.sendMessage(Message.raw("§8§m-------------------------"));
-        player.sendMessage(Message.raw("§6§lNetwork Servers §7(" + servers.size() + ")");
+        player.sendMessage(Message.raw("§6§lNetwork Servers §7(" + servers.size() + ")"));
         player.sendMessage(Message.raw("§8§m-------------------------"));
 
         if (servers.isEmpty()) {
@@ -133,7 +133,7 @@ public class NetworkCommand {
                 hubBadge,
                 server.getCurrentPlayers(),
                 server.getMaxPlayers()
-            ));
+            )));
         }
 
         player.sendMessage(Message.raw("§8§m-------------------------"));
@@ -154,13 +154,13 @@ public class NetworkCommand {
 
         ServerRecord server = registryManager.getServerById(serverId);
         if (server == null) {
-            player.sendMessage(Message.raw("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId));
             return true;
         }
 
         hubManager.setHub(serverId, priority);
         player.sendMessage(Message.raw(String.format("§aSet §e%s §aas hub with priority §e%d",
-            server.getServerName(), priority));
+            server.getServerName(), priority)));
 
         return true;
     }
@@ -178,12 +178,12 @@ public class NetworkCommand {
 
         ServerRecord server = registryManager.getServerById(serverId);
         if (server == null) {
-            player.sendMessage(Message.raw("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId));
             return true;
         }
 
         hubManager.unsetHub(serverId);
-        player.sendMessage(Message.raw("§aRemoved hub designation from §e" + server.getServerName());
+        player.sendMessage(Message.raw("§aRemoved hub designation from §e" + server.getServerName()));
 
         return true;
     }
@@ -195,7 +195,7 @@ public class NetworkCommand {
         List<ServerRecord> hubs = registryManager.getHubServers();
 
         player.sendMessage(Message.raw("§8§m-------------------------"));
-        player.sendMessage(Message.raw("§6§lHub Servers §7(" + hubs.size() + ")");
+        player.sendMessage(Message.raw("§6§lHub Servers §7(" + hubs.size() + ")"));
         player.sendMessage(Message.raw("§8§m-------------------------"));
 
         if (hubs.isEmpty()) {
@@ -212,7 +212,7 @@ public class NetworkCommand {
                 hub.getHubPriority(),
                 hub.getCurrentPlayers(),
                 hub.getMaxPlayers()
-            ));
+            )));
         }
 
         player.sendMessage(Message.raw("§8§m-------------------------"));
@@ -235,25 +235,25 @@ public class NetworkCommand {
         // TODO: Get player from server when API is available
         // Player target = server.getPlayer(playerName);
         // if (target == null) {
-        //     player.sendMessage(Message.raw("§cPlayer not found: " + playerName);
+        //     player.sendMessage(Message.raw("§cPlayer not found: " + playerName));
         //     return true;
         // }
 
         // Get destination server
         ServerRecord destination = registryManager.getServerById(serverId);
         if (destination == null) {
-            player.sendMessage(Message.raw("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId));
             return true;
         }
 
         if (destination.getStatus() != ServerRecord.ServerStatus.ONLINE) {
-            player.sendMessage(Message.raw("§cServer " + destination.getServerName() + " is offline");
+            player.sendMessage(Message.raw("§cServer " + destination.getServerName() + " is offline"));
             return true;
         }
 
         // TODO: Transfer player when API is available
         player.sendMessage(Message.raw(String.format("§aTransferring §e%s §ato §e%s§a...",
-            playerName, destination.getServerName()));
+            playerName, destination.getServerName())));
 
         return true;
     }
@@ -271,18 +271,18 @@ public class NetworkCommand {
 
         ServerRecord destination = registryManager.getServerById(serverId);
         if (destination == null) {
-            player.sendMessage(Message.raw("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId));
             return true;
         }
 
         if (destination.getStatus() != ServerRecord.ServerStatus.ONLINE) {
-            player.sendMessage(Message.raw("§cServer " + destination.getServerName() + " is offline");
+            player.sendMessage(Message.raw("§cServer " + destination.getServerName() + " is offline"));
             return true;
         }
 
         // TODO: Get online players and transfer them
         player.sendMessage(Message.raw(String.format("§aTransferring all players to §e%s§a...",
-            destination.getServerName()));
+            destination.getServerName())));
 
         return true;
     }

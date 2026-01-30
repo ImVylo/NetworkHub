@@ -4,68 +4,69 @@ import com.hytale.networkhub.config.DatabaseConfig;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class SchemaInitializer {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final String dbType;
 
-    public SchemaInitializer(Logger logger, DatabaseManager dbManager, DatabaseConfig config) {
+    public SchemaInitializer(HytaleLogger logger, DatabaseManager dbManager, DatabaseConfig config) {
         this.logger = logger;
         this.dbManager = dbManager;
         this.dbType = config.getConfig().type.toUpperCase();
     }
 
     public void initialize() {
-        logger.info("Initializing database schema...");
+        logger.at(Level.INFO).log("Initializing database schema...");
 
         try (Connection conn = dbManager.getConnection();
              Statement stmt = conn.createStatement()) {
 
             // Create servers table
             stmt.execute(getServersTableSQL());
-            logger.info("Created/verified servers table");
+            logger.at(Level.INFO).log("Created/verified servers table");
 
             // Create server_health table
             stmt.execute(getServerHealthTableSQL());
-            logger.info("Created/verified server_health table");
+            logger.at(Level.INFO).log("Created/verified server_health table");
 
             // Create player_locations table
             stmt.execute(getPlayerLocationsTableSQL());
-            logger.info("Created/verified player_locations table");
+            logger.at(Level.INFO).log("Created/verified player_locations table");
 
             // Create teleporters table
             stmt.execute(getTeleportersTableSQL());
-            logger.info("Created/verified teleporters table");
+            logger.at(Level.INFO).log("Created/verified teleporters table");
 
             // Create transfer_history table
             stmt.execute(getTransferHistoryTableSQL());
-            logger.info("Created/verified transfer_history table");
+            logger.at(Level.INFO).log("Created/verified transfer_history table");
 
             // Create server_queues table
             stmt.execute(getServerQueuesTableSQL());
-            logger.info("Created/verified server_queues table");
+            logger.at(Level.INFO).log("Created/verified server_queues table");
 
             // Create chat_messages table
             stmt.execute(getChatMessagesTableSQL());
-            logger.info("Created/verified chat_messages table");
+            logger.at(Level.INFO).log("Created/verified chat_messages table");
 
             // Create announcements table
             stmt.execute(getAnnouncementsTableSQL());
-            logger.info("Created/verified announcements table");
+            logger.at(Level.INFO).log("Created/verified announcements table");
 
             // Create moderation_actions table
             stmt.execute(getModerationActionsTableSQL());
-            logger.info("Created/verified moderation_actions table");
+            logger.at(Level.INFO).log("Created/verified moderation_actions table");
 
             // Create indexes
             createIndexes(stmt);
 
-            logger.info("Database schema initialized successfully");
+            logger.at(Level.INFO).log("Database schema initialized successfully");
 
         } catch (SQLException e) {
-            logger.severe("Failed to initialize database schema: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to initialize database schema: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -392,10 +393,10 @@ public class SchemaInitializer {
                 stmt.execute(index);
             } catch (SQLException e) {
                 // Index might already exist, continue
-                logger.fine("Index creation note: " + e.getMessage());
+                logger.at(Level.FINE).log("Index creation note: " + e.getMessage());
             }
         }
 
-        logger.info("Created/verified all indexes");
+        logger.at(Level.INFO).log("Created/verified all indexes");
     }
 }

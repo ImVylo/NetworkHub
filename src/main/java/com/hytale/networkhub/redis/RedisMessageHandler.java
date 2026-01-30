@@ -4,13 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.Map;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class RedisMessageHandler {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final Gson gson;
 
-    public RedisMessageHandler(Logger logger, Gson gson) {
+    public RedisMessageHandler(HytaleLogger logger, Gson gson) {
         this.logger = logger;
         this.gson = gson;
     }
@@ -21,12 +22,12 @@ public class RedisMessageHandler {
             String playerName = (String) message.get("playerName");
             String serverId = (String) message.get("serverId");
 
-            logger.fine("Player " + playerName + " joined " + serverId + " (via Redis)");
+            logger.at(Level.FINE).log("Player " + playerName + " joined " + serverId + " (via Redis)");
 
             // TODO: Update local cache, trigger events, etc.
 
         } catch (Exception e) {
-            logger.warning("Error handling player join message: " + e.getMessage());
+            logger.at(Level.WARNING).log("Error handling player join message: " + e.getMessage());
         }
     }
 
@@ -36,12 +37,12 @@ public class RedisMessageHandler {
             String playerName = (String) message.get("playerName");
             String serverId = (String) message.get("serverId");
 
-            logger.fine("Player " + playerName + " quit " + serverId + " (via Redis)");
+            logger.at(Level.FINE).log("Player " + playerName + " quit " + serverId + " (via Redis)");
 
             // TODO: Update local cache, trigger events, etc.
 
         } catch (Exception e) {
-            logger.warning("Error handling player quit message: " + e.getMessage());
+            logger.at(Level.WARNING).log("Error handling player quit message: " + e.getMessage());
         }
     }
 }

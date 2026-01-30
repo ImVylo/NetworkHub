@@ -7,14 +7,15 @@ import com.hytale.networkhub.database.models.PlayerLocation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class PlayerTrackingManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final NetworkConfig config;
 
-    public PlayerTrackingManager(Logger logger, DatabaseManager dbManager, NetworkConfig config) {
+    public PlayerTrackingManager(HytaleLogger logger, DatabaseManager dbManager, NetworkConfig config) {
         this.logger = logger;
         this.dbManager = dbManager;
         this.config = config;
@@ -47,7 +48,7 @@ public class PlayerTrackingManager {
         }
 
         dbManager.executeUpdate(sql, playerUuid.toString(), playerName, serverId);
-        logger.fine("Tracked player join: " + playerName + " on " + serverId);
+        logger.at(Level.FINE).log("Tracked player join: " + playerName + " on " + serverId);
     }
 
     public void trackQuit(UUID playerUuid) {
@@ -136,6 +137,28 @@ public class PlayerTrackingManager {
             }
             return players;
         }, serverId);
+    }
+
+    public List<PlayerLocation> getAllOnlinePlayers() {
+        String sql = "SELECT * FROM player_locations ORDER BY server_id, player_name";
+
+        return dbManager.executeQuery(sql, rs -> {
+            List<PlayerLocation> players = new ArrayList<>();
+            while (rs.next()) {
+                PlayerLocation location = new PlayerLocation();
+                location.setPlayerUuid(UUID.fromString(rs.getString("player_uuid")));
+                location.setPlayerName(rs.getString("player_name"));
+                location.setServerId(rs.getString("server_id"));
+                location.setJoinedAt(rs.getTimestamp("joined_at"));
+                location.setLastSeen(rs.getTimestamp("last_seen"));
+                location.setWorldName(rs.getString("world_name"));
+                location.setX(rs.getDouble("x"));
+                location.setY(rs.getDouble("y"));
+                location.setZ(rs.getDouble("z"));
+                players.add(location);
+            }
+            return players;
+        });
     }
 
     private boolean isMySQL() {

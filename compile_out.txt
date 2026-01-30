@@ -1,0 +1,166 @@
+warning: [options] location of system modules is not set in conjunction with -source 17
+  not setting the location of system modules may lead to class files that cannot run on JDK 17
+    --release 17 is recommended instead of -source 17 -target 17 because it sets the location of system modules automatically
+src\main\java\com\hytale\networkhub\gui\menus\AnnouncementCreatorGUI.java:98: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        announcement.setCreatorUuid(player.getPlayerRef().getUuid());
+                                          ^
+src\main\java\com\hytale\networkhub\gui\menus\AnnouncementCreatorGUI.java:99: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        announcement.setCreatorName(player.getPlayerRef().getUsername());
+                                          ^
+src\main\java\com\hytale\networkhub\gui\GUIManager.java:58: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        activeGUIs.put(player.getPlayerRef().getUuid(), guiId);
+                             ^
+src\main\java\com\hytale\networkhub\gui\GUIManager.java:59: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        logger.at(Level.FINE).log(player.getPlayerRef().getUsername() + " opened GUI: " + guiId);
+                                        ^
+src\main\java\com\hytale\networkhub\gui\GUIManager.java:66: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        String guiId = activeGUIs.remove(player.getPlayerRef().getUuid());
+                                               ^
+src\main\java\com\hytale\networkhub\gui\GUIManager.java:68: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            logger.at(Level.FINE).log(player.getPlayerRef().getUsername() + " closed GUI: " + guiId);
+                                            ^
+src\main\java\com\hytale\networkhub\commands\GlobalChatCommand.java:41: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        chatManager.sendGlobalMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), message);
+                                            ^
+src\main\java\com\hytale\networkhub\commands\GlobalChatCommand.java:41: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        chatManager.sendGlobalMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), message);
+                                                                             ^
+src\main\java\com\hytale\networkhub\commands\HUDCommand.java:93: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        if (networkHUD.isEnabled(player.getPlayerRef().getUuid())) {
+                                       ^
+src\main\java\com\hytale\networkhub\commands\HUDCommand.java:108: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        if (!networkHUD.isEnabled(player.getPlayerRef().getUuid())) {
+                                        ^
+src\main\java\com\hytale\networkhub\gui\hud\NetworkHUD.java:62: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        hudEnabled.put(player.getPlayerRef().getUuid(), true);
+                             ^
+src\main\java\com\hytale\networkhub\gui\hud\NetworkHUD.java:68: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        logger.at(Level.FINE).log("Enabled network HUD for " + player.getPlayerRef().getUsername());
+                                                                     ^
+src\main\java\com\hytale\networkhub\gui\hud\NetworkHUD.java:75: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        hudEnabled.remove(player.getPlayerRef().getUuid());
+                                ^
+src\main\java\com\hytale\networkhub\gui\hud\NetworkHUD.java:77: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        logger.at(Level.FINE).log("Disabled network HUD for " + player.getPlayerRef().getUsername());
+                                                                      ^
+src\main\java\com\hytale\networkhub\gui\hud\NetworkHUD.java:84: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        if (isEnabled(player.getPlayerRef().getUuid())) {
+                            ^
+src\main\java\com\hytale\networkhub\gui\hud\NetworkHUD.java:114: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            if (isEnabled(player.getPlayerRef().getUuid())) {
+                                ^
+src\main\java\com\hytale\networkhub\gui\hud\NetworkHUD.java:118: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+                    logger.at(Level.WARNING).log("Failed to update HUD for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
+                                                                                     ^
+src\main\java\com\hytale\networkhub\gui\hud\HUDRenderer.java:55: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            logger.at(Level.WARNING).log("Failed to create scoreboard for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
+                                                                                    ^
+src\main\java\com\hytale\networkhub\gui\hud\HUDRenderer.java:63: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        Object scoreboard = activeScoreboards.get(player.getPlayerRef().getUuid());
+                                                        ^
+src\main\java\com\hytale\networkhub\gui\hud\HUDRenderer.java:83: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            logger.at(Level.WARNING).log("Failed to update scoreboard for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
+                                                                                    ^
+src\main\java\com\hytale\networkhub\gui\hud\HUDRenderer.java:91: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        Object scoreboard = activeScoreboards.remove(player.getPlayerRef().getUuid());
+                                                           ^
+src\main\java\com\hytale\networkhub\commands\MessageCommand.java:47: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            player.getPlayerRef().getUuid(),
+                  ^
+src\main\java\com\hytale\networkhub\commands\MessageCommand.java:48: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            player.getPlayerRef().getUsername(),
+                  ^
+src\main\java\com\hytale\networkhub\commands\QueueCommand.java:103: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        queueManager.joinQueue(player.getPlayerRef().getUuid(), serverId, priority);
+                                     ^
+src\main\java\com\hytale\networkhub\commands\QueueCommand.java:125: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        queueManager.leaveQueue(player.getPlayerRef().getUuid(), serverId);
+                                      ^
+src\main\java\com\hytale\networkhub\commands\QueueCommand.java:148: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        int position = queueManager.getQueuePosition(player.getPlayerRef().getUuid(), serverId);
+                                                           ^
+src\main\java\com\hytale\networkhub\commands\ReplyCommand.java:39: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        UUID recipientUuid = messagingManager.getLastConversationPartner(player.getPlayerRef().getUuid());
+                                                                               ^
+src\main\java\com\hytale\networkhub\commands\ReplyCommand.java:54: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            player.getPlayerRef().getUuid(),
+                  ^
+src\main\java\com\hytale\networkhub\commands\ReplyCommand.java:55: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            player.getPlayerRef().getUsername(),
+                  ^
+src\main\java\com\hytale\networkhub\gui\menus\ServerSelectorGUI.java:107: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        transferManager.transferPlayer(player.getPlayerRef(), server, TransferManager.TransferType.COMMAND, "Server selector")
+                                             ^
+src\main\java\com\hytale\networkhub\gui\menus\ServerSelectorGUI.java:131: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            queueManager.joinQueue(player.getPlayerRef().getUuid(), server.getServerId(), priority);
+                                         ^
+src\main\java\com\hytale\networkhub\commands\StaffChatCommand.java:48: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        chatManager.sendStaffMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), message);
+                                           ^
+src\main\java\com\hytale\networkhub\commands\StaffChatCommand.java:48: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        chatManager.sendStaffMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), message);
+                                                                            ^
+src\main\java\com\hytale\networkhub\listeners\PlayerChatListener.java:25: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            chatManager.sendGlobalMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), actualMessage);
+                                                ^
+src\main\java\com\hytale\networkhub\listeners\PlayerChatListener.java:25: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            chatManager.sendGlobalMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), actualMessage);
+                                                                                 ^
+src\main\java\com\hytale\networkhub\listeners\PlayerChatListener.java:33: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            chatManager.sendStaffMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), actualMessage);
+                                               ^
+src\main\java\com\hytale\networkhub\listeners\PlayerChatListener.java:33: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            chatManager.sendStaffMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), actualMessage);
+                                                                                ^
+src\main\java\com\hytale\networkhub\listeners\PlayerJoinListener.java:33: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            trackingManager.trackJoin(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername());
+                                            ^
+src\main\java\com\hytale\networkhub\listeners\PlayerJoinListener.java:33: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            trackingManager.trackJoin(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername());
+                                                                             ^
+src\main\java\com\hytale\networkhub\listeners\PlayerJoinListener.java:38: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+                message.put("playerUuid", player.getPlayerRef().getUuid().toString());
+                                                ^
+src\main\java\com\hytale\networkhub\listeners\PlayerJoinListener.java:39: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+                message.put("playerName", player.getPlayerRef().getUsername());
+                                                ^
+src\main\java\com\hytale\networkhub\listeners\PlayerJoinListener.java:46: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            logger.at(Level.FINE).log("Player joined: " + player.getPlayerRef().getUsername());
+                                                                ^
+src\main\java\com\hytale\networkhub\listeners\PlayerQuitListener.java:30: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            trackingManager.trackQuit(player.getPlayerRef().getUuid());
+                                            ^
+src\main\java\com\hytale\networkhub\listeners\PlayerQuitListener.java:35: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+                message.put("playerUuid", player.getPlayerRef().getUuid().toString());
+                                                ^
+src\main\java\com\hytale\networkhub\listeners\PlayerQuitListener.java:36: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+                message.put("playerName", player.getPlayerRef().getUsername());
+                                                ^
+src\main\java\com\hytale\networkhub\listeners\PlayerQuitListener.java:43: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            logger.at(Level.FINE).log("Player quit: " + player.getPlayerRef().getUsername());
+                                                              ^
+src\main\java\com\hytale\networkhub\listeners\ServerShutdownListener.java:79: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+                    player.getPlayerRef(),
+                          ^
+src\main\java\com\hytale\networkhub\listeners\ServerShutdownListener.java:128: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+                    player.getPlayerRef(),
+                          ^
+src\main\java\com\hytale\networkhub\listeners\TeleporterInteractionListener.java:39: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        UUID playerUuid = player.getPlayerRef().getUuid();
+                                ^
+src\main\java\com\hytale\networkhub\listeners\TeleporterInteractionListener.java:82: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        UUID playerUuid = player.getPlayerRef().getUuid();
+                                ^
+src\main\java\com\hytale\networkhub\listeners\TeleporterInteractionListener.java:132: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+        logger.at(Level.INFO).log("Player " + player.getPlayerRef().getUsername() + " stepped on teleporter to " + destination.getServerName());
+                                                    ^
+src\main\java\com\hytale\networkhub\listeners\TeleporterInteractionListener.java:141: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+                teleporterManager.applyCooldown(player.getPlayerRef().getUuid(),
+                                                      ^
+src\main\java\com\hytale\networkhub\listeners\TeleporterInteractionListener.java:147: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+            transferManager.transferPlayer(player.getPlayerRef(), pending.destination,
+                                                 ^
+src\main\java\com\hytale\networkhub\managers\ModerationManager.java:336: warning: [removal] getPlayerRef() in Player has been deprecated and marked for removal
+                if (player.getPlayerRef().getUuid().equals(targetUuid)) {
+                          ^
+55 warnings

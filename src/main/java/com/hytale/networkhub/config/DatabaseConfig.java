@@ -7,15 +7,16 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class DatabaseConfig {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final Path configFile;
     private final Gson gson;
     private Config config;
 
-    public DatabaseConfig(Logger logger, Path configDir) {
+    public DatabaseConfig(HytaleLogger logger, Path configDir) {
         this.logger = logger;
         this.configFile = configDir.resolve("database-config.json");
         this.gson = new GsonBuilder().setPrettyPrinting().create();
@@ -25,7 +26,7 @@ public class DatabaseConfig {
     public void load() {
         try {
             if (!Files.exists(configFile)) {
-                logger.info("Database config not found, creating default");
+                logger.at(Level.INFO).log("Database config not found, creating default");
                 save();
                 return;
             }
@@ -34,14 +35,14 @@ public class DatabaseConfig {
                 Config loaded = gson.fromJson(reader, Config.class);
                 if (loaded != null) {
                     this.config = loaded;
-                    logger.info("Loaded database config");
+                    logger.at(Level.INFO).log("Loaded database config");
                 } else {
-                    logger.warning("Database config was empty, using defaults");
+                    logger.at(Level.WARNING).log("Database config was empty, using defaults");
                     save();
                 }
             }
         } catch (IOException e) {
-            logger.severe("Failed to load database config: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to load database config: " + e.getMessage());
         }
     }
 
@@ -50,10 +51,10 @@ public class DatabaseConfig {
             Files.createDirectories(configFile.getParent());
             try (BufferedWriter writer = Files.newBufferedWriter(configFile)) {
                 gson.toJson(config, writer);
-                logger.info("Saved database config");
+                logger.at(Level.INFO).log("Saved database config");
             }
         } catch (IOException e) {
-            logger.severe("Failed to save database config: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to save database config: " + e.getMessage());
         }
     }
 

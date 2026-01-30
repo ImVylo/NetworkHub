@@ -8,15 +8,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class RedisConfig {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final Path configFile;
     private final Gson gson;
     private Config config;
 
-    public RedisConfig(Logger logger, Path configDir) {
+    public RedisConfig(HytaleLogger logger, Path configDir) {
         this.logger = logger;
         this.configFile = configDir.resolve("redis-config.json");
         this.gson = new GsonBuilder().setPrettyPrinting().create();
@@ -26,7 +27,7 @@ public class RedisConfig {
     public void load() {
         try {
             if (!Files.exists(configFile)) {
-                logger.info("Redis config not found, creating default");
+                logger.at(Level.INFO).log("Redis config not found, creating default");
                 save();
                 return;
             }
@@ -35,14 +36,14 @@ public class RedisConfig {
                 Config loaded = gson.fromJson(reader, Config.class);
                 if (loaded != null) {
                     this.config = loaded;
-                    logger.info("Loaded Redis config");
+                    logger.at(Level.INFO).log("Loaded Redis config");
                 } else {
-                    logger.warning("Redis config was empty, using defaults");
+                    logger.at(Level.WARNING).log("Redis config was empty, using defaults");
                     save();
                 }
             }
         } catch (IOException e) {
-            logger.severe("Failed to load Redis config: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to load Redis config: " + e.getMessage());
         }
     }
 
@@ -51,10 +52,10 @@ public class RedisConfig {
             Files.createDirectories(configFile.getParent());
             try (BufferedWriter writer = Files.newBufferedWriter(configFile)) {
                 gson.toJson(config, writer);
-                logger.info("Saved Redis config");
+                logger.at(Level.INFO).log("Saved Redis config");
             }
         } catch (IOException e) {
-            logger.severe("Failed to save Redis config: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to save Redis config: " + e.getMessage());
         }
     }
 

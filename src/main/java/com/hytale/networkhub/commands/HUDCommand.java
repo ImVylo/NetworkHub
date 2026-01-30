@@ -5,17 +5,17 @@ import com.hytale.networkhub.gui.hud.NetworkHUD;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * Command to control the network HUD display
  */
 public class HUDCommand {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final NetworkHUD networkHUD;
 
-    public HUDCommand(Logger logger, NetworkConfig config, NetworkHUD networkHUD) {
+    public HUDCommand(HytaleLogger logger, NetworkConfig config, NetworkHUD networkHUD) {
         this.logger = logger;
         this.config = config;
         this.networkHUD = networkHUD;
@@ -51,7 +51,7 @@ public class HUDCommand {
                 return reloadHUD(player);
 
             default:
-                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand);
+                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand));
                 sendHelp(player);
                 return true;
         }

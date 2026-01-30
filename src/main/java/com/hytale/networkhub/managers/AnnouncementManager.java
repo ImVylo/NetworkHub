@@ -6,18 +6,20 @@ import com.hytale.networkhub.database.DatabaseManager;
 import com.hytale.networkhub.database.models.Announcement;
 import com.hytale.networkhub.redis.RedisManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.Collection;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class AnnouncementManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final RedisManager redisManager;
     private final NetworkConfig config;
     private final Gson gson;
 
-    public AnnouncementManager(Logger logger, DatabaseManager dbManager, RedisManager redisManager,
+    public AnnouncementManager(HytaleLogger logger, DatabaseManager dbManager, RedisManager redisManager,
                               NetworkConfig config, Gson gson) {
         this.logger = logger;
         this.dbManager = dbManager;
@@ -74,7 +76,7 @@ public class AnnouncementManager {
             redisManager.publish(redisManager.getChannel("announcement"), announcement);
         }
 
-        logger.info("Announcement created by " + announcement.getCreatorName() + ": " + announcement.getTitle());
+        logger.at(Level.INFO).log("Announcement created by " + announcement.getCreatorName() + ": " + announcement.getTitle());
     }
 
     public void handleIncomingAnnouncement(String json, Collection<Player> onlinePlayers) {
@@ -100,7 +102,7 @@ public class AnnouncementManager {
             }
 
         } catch (Exception e) {
-            logger.severe("Error handling announcement: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Error handling announcement: " + e.getMessage());
         }
     }
 
@@ -128,7 +130,7 @@ public class AnnouncementManager {
                 break;
         }
 
-        player.sendMessage(message);
+        player.sendMessage(Message.raw(message));
 
         // TODO: Play sound if specified
         // if (announcement.getSound() != null) {

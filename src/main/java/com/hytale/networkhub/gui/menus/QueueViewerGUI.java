@@ -6,7 +6,7 @@ import com.hytale.networkhub.managers.QueueManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * GUI for viewing and managing server queues
@@ -14,12 +14,12 @@ import java.util.logging.Logger;
 public class QueueViewerGUI {
     private static final String GUI_ID = "queue_viewer";
 
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final GUIManager guiManager;
     private final QueueManager queueManager;
 
-    public QueueViewerGUI(Logger logger, NetworkConfig config, GUIManager guiManager,
+    public QueueViewerGUI(HytaleLogger logger, NetworkConfig config, GUIManager guiManager,
                          QueueManager queueManager) {
         this.logger = logger;
         this.config = config;
@@ -65,7 +65,7 @@ public class QueueViewerGUI {
         player.sendMessage(Message.raw("§8§m-------------------------"));
 
         int totalQueued = queueManager.getTotalQueuedPlayers();
-        player.sendMessage(Message.raw("§eTotal Queued Players: §f" + totalQueued);
+        player.sendMessage(Message.raw("§eTotal Queued Players: §f" + totalQueued));
 
         player.sendMessage(Message.raw("§8§m-------------------------"));
         player.sendMessage(Message.raw("§7Commands:"));

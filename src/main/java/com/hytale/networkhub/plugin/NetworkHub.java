@@ -1,42 +1,66 @@
 package com.hytale.networkhub.plugin;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.hytale.networkhub.config.DatabaseConfig;
+import com.hypixel.hytale.server.core.plugin.JavaPlugin;
+import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hytale.networkhub.config.NetworkConfig;
+import com.hytale.networkhub.config.DatabaseConfig;
 import com.hytale.networkhub.config.RedisConfig;
 import com.hytale.networkhub.database.DatabaseManager;
 import com.hytale.networkhub.database.SchemaInitializer;
+import com.hytale.networkhub.managers.*;
 import com.hytale.networkhub.redis.RedisManager;
-import com.hypixel.hytale.common.plugin.PluginManifest;
-import com.hypixel.hytale.server.core.plugin.JavaPlugin;
-import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import com.hytale.networkhub.tasks.*;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
-import java.sql.SQLException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
+/**
+ * NetworkHub - Multi-server coordination plugin for Hytale
+ *
+ * Features:
+ * - Server registry and health monitoring
+ * - Cross-server player tracking
+ * - Physical teleporter blocks
+ * - Priority-based queue system
+ * - Cross-server messaging and chat
+ * - Network-wide announcements
+ * - Interactive GUIs and persistent HUD
+ * - Cross-server moderation
+ */
 public class NetworkHub extends JavaPlugin {
-    public static final PluginManifest MANIFEST = PluginManifest.corePlugin(NetworkHub.class).build();
 
     private static NetworkHub instance;
 
     // Configuration
-    private NetworkConfig networkConfig;
-    private DatabaseConfig databaseConfig;
-    private RedisConfig redisConfig;
-
-    // Core managers
-    private DatabaseManager databaseManager;
-    private RedisManager redisManager;
+    private NetworkConfig config;
     private Gson gson;
 
-    // TODO: Add remaining managers in Phase 2
-    // private ServerRegistryManager serverRegistryManager;
-    // private HeartbeatManager heartbeatManager;
-    // private HubManager hubManager;
-    // private TransferManager transferManager;
-    // etc...
+    // Database
+    private DatabaseManager databaseManager;
+
+    // Redis
+    private RedisManager redisManager;
+
+    // Managers
+    private ServerRegistryManager serverRegistryManager;
+    private HeartbeatManager heartbeatManager;
+    private HubManager hubManager;
+    private PlayerTrackingManager playerTrackingManager;
+    private TransferManager transferManager;
+    private TeleporterManager teleporterManager;
+    private QueueManager queueManager;
+    private MessagingManager messagingManager;
+    private ChatManager chatManager;
+    private AnnouncementManager announcementManager;
+    private ModerationManager moderationManager;
+
+    // Scheduler
+    private ScheduledExecutorService scheduler;
 
     public NetworkHub(@Nonnull JavaPluginInit init) {
         super(init);
@@ -45,124 +69,192 @@ public class NetworkHub extends JavaPlugin {
 
     @Override
     protected void setup() {
-        getLogger().atInfo().log("=== NetworkHub Plugin Setup ===");
-
-        // Initialize Gson
-        gson = new GsonBuilder().setPrettyPrinting().create();
-
-        // Get config directory
-        Path configDir = getDataDirectory();
+        getLogger().at(Level.INFO).log("NetworkHub setting up...");
 
         try {
-            // Step 1: Load configurations
-            getLogger().atInfo().log("Loading configurations...");
-            networkConfig = new NetworkConfig(getLogger(), configDir);
-            networkConfig.load();
+            // Initialize Gson
+            gson = new Gson();
 
-            databaseConfig = new DatabaseConfig(getLogger(), configDir);
-            databaseConfig.load();
+            // Load configurations
+            Path configPath = getFile().getParent().resolve("config");
+            config = new NetworkConfig(getLogger(), configPath);
+            config.load();
+            getLogger().at(Level.INFO).log("Configuration loaded for server: %s", config.getConfig().server.serverId);
 
-            redisConfig = new RedisConfig(getLogger(), configDir);
-            redisConfig.load();
+            // Load database config
+            DatabaseConfig dbConfig = new DatabaseConfig(getLogger(), configPath);
+            dbConfig.load();
 
-            // Step 2: Initialize Database
-            getLogger().atInfo().log("Initializing database connection...");
-            databaseManager = new DatabaseManager(getLogger(), databaseConfig);
+            // Initialize database
+            databaseManager = new DatabaseManager(getLogger(), dbConfig);
             databaseManager.initialize();
+            getLogger().at(Level.INFO).log("Database connection established");
 
-            // Step 3: Initialize database schema
-            getLogger().atInfo().log("Initializing database schema...");
-            SchemaInitializer schemaInitializer = new SchemaInitializer(getLogger(), databaseManager, databaseConfig);
+            // Initialize schema
+            SchemaInitializer schemaInitializer = new SchemaInitializer(getLogger(), databaseManager, dbConfig);
             schemaInitializer.initialize();
+            getLogger().at(Level.INFO).log("Database schema initialized");
 
-            // Step 4: Initialize Redis
-            if (networkConfig.getConfig().redis.enabled) {
-                getLogger().atInfo().log("Initializing Redis connection...");
+            // Initialize Redis (if enabled)
+            if (config.getConfig().redis.enabled) {
+                RedisConfig redisConfig = new RedisConfig(getLogger(), configPath);
+                redisConfig.load();
                 redisManager = new RedisManager(getLogger(), redisConfig, gson);
                 redisManager.initialize();
+                getLogger().at(Level.INFO).log("Redis connection established");
             } else {
-                getLogger().atWarning().log("Redis is disabled - some features will not be available");
+                getLogger().at(Level.WARNING).log("Redis is disabled - cross-server features will not work");
             }
 
-            // TODO: Phase 2 - Initialize managers
-            // TODO: Phase 3-11 - Initialize remaining components
-            // TODO: Phase 9 - Register commands
-            // TODO: Phase 3 - Register listeners
+            // Initialize managers
+            serverRegistryManager = new ServerRegistryManager(getLogger(), databaseManager, config);
+            heartbeatManager = new HeartbeatManager(getLogger(), config, databaseManager);
+            hubManager = new HubManager(getLogger(), databaseManager, serverRegistryManager);
+            playerTrackingManager = new PlayerTrackingManager(getLogger(), databaseManager, config);
+            transferManager = new TransferManager(getLogger(), databaseManager, config);
+            teleporterManager = new TeleporterManager(getLogger(), databaseManager, config);
+            queueManager = new QueueManager(getLogger(), databaseManager, config, serverRegistryManager, transferManager, playerTrackingManager);
+            messagingManager = new MessagingManager(getLogger(), databaseManager, redisManager, playerTrackingManager, config, gson);
+            chatManager = new ChatManager(getLogger(), databaseManager, redisManager, config, gson);
+            announcementManager = new AnnouncementManager(getLogger(), databaseManager, redisManager, config, gson);
+            moderationManager = new ModerationManager(getLogger(), config, databaseManager, redisManager, gson);
 
-            getLogger().atInfo().log("=== NetworkHub Plugin Setup Complete ===");
+            getLogger().at(Level.INFO).log("Managers initialized");
 
-        } catch (SQLException e) {
-            getLogger().atSevere().withCause(e).log("Failed to initialize database");
-            throw new RuntimeException("NetworkHub initialization failed", e);
+            // Register server in database
+            serverRegistryManager.registerServer();
+            getLogger().at(Level.INFO).log("Server registered in network");
+
+            getLogger().at(Level.INFO).log("NetworkHub setup complete");
+
         } catch (Exception e) {
-            getLogger().atSevere().withCause(e).log("Failed to setup NetworkHub plugin");
-            throw new RuntimeException("NetworkHub initialization failed", e);
+            getLogger().at(Level.SEVERE).withCause(e).log("Failed to setup NetworkHub");
+            throw new RuntimeException("NetworkHub setup failed", e);
         }
     }
 
     @Override
     protected void start() {
-        getLogger().atInfo().log("=== NetworkHub Plugin Starting ===");
+        super.start();
+        getLogger().at(Level.INFO).log("NetworkHub starting...");
 
         try {
-            // TODO: Phase 2 - Register this server with database
-            // TODO: Phase 2 - Start scheduled tasks (heartbeat, health check, etc.)
-            // TODO: Phase 4 - Load teleporters from database
-            // TODO: Phase 8 - Initialize GUI system
+            // Initialize scheduler
+            scheduler = Executors.newScheduledThreadPool(4, r -> {
+                Thread t = new Thread(r, "NetworkHub-Worker");
+                t.setDaemon(true);
+                return t;
+            });
 
-            String serverId = networkConfig.getConfig().server.serverId;
-            String serverName = networkConfig.getConfig().server.serverName;
+            // Load teleporters for this server
+            teleporterManager.loadTeleporters();
+            getLogger().at(Level.INFO).log("Loaded teleporters");
 
-            getLogger().atInfo().log("NetworkHub started on server: " + serverName + " (" + serverId + ")");
+            // Schedule heartbeat task (every 10 seconds)
+            scheduler.scheduleAtFixedRate(
+                new HeartbeatTask(getLogger(), config, heartbeatManager),
+                0,
+                config.getConfig().heartbeat.intervalSeconds,
+                TimeUnit.SECONDS
+            );
+
+            // Schedule health check task (every 15 seconds)
+            scheduler.scheduleAtFixedRate(
+                new HealthCheckTask(getLogger(), config, databaseManager),
+                15,
+                15,
+                TimeUnit.SECONDS
+            );
+
+            // Schedule player location update task (every 30 seconds)
+            scheduler.scheduleAtFixedRate(
+                new PlayerLocationUpdateTask(getLogger(), config, playerTrackingManager),
+                30,
+                30,
+                TimeUnit.SECONDS
+            );
+
+            // Schedule queue processing task (every 2 seconds)
+            scheduler.scheduleAtFixedRate(
+                new QueueProcessTask(getLogger(), queueManager),
+                2,
+                2,
+                TimeUnit.SECONDS
+            );
+
+            // Schedule cleanup task (every 5 minutes)
+            scheduler.scheduleAtFixedRate(
+                new CleanupTask(getLogger(), config, databaseManager),
+                5,
+                5,
+                TimeUnit.MINUTES
+            );
+
+            getLogger().at(Level.INFO).log("Scheduled tasks started");
+
+            // TODO: Register commands
+            // TODO: Register event listeners
+            // TODO: Subscribe to Redis channels
+
+            getLogger().at(Level.INFO).log("NetworkHub started successfully!");
 
         } catch (Exception e) {
-            getLogger().atSevere().withCause(e).log("Failed to start NetworkHub plugin");
+            getLogger().at(Level.SEVERE).withCause(e).log("Failed to start NetworkHub");
             throw new RuntimeException("NetworkHub start failed", e);
         }
     }
 
     @Override
-    protected void onShutdown() {
-        getLogger().atInfo().log("=== NetworkHub Plugin Shutting Down ===");
+    protected void shutdown() {
+        getLogger().at(Level.INFO).log("NetworkHub shutting down...");
 
         try {
-            // TODO: Phase 10 - Implement graceful shutdown
-            // If fallback enabled, transfer all players to hub
-            // Unregister server from database
-            // Clean up resources
+            // Stop scheduled tasks
+            if (scheduler != null && !scheduler.isShutdown()) {
+                scheduler.shutdown();
+                try {
+                    if (!scheduler.awaitTermination(10, TimeUnit.SECONDS)) {
+                        scheduler.shutdownNow();
+                    }
+                } catch (InterruptedException e) {
+                    scheduler.shutdownNow();
+                    Thread.currentThread().interrupt();
+                }
+            }
 
-            // Close Redis connections
+            // Unregister server
+            if (serverRegistryManager != null) {
+                serverRegistryManager.unregisterServer(config.getConfig().server.serverId);
+                getLogger().at(Level.INFO).log("Server unregistered from network");
+            }
+
+            // Close Redis connection
             if (redisManager != null) {
                 redisManager.close();
+                getLogger().at(Level.INFO).log("Redis connection closed");
             }
 
-            // Close database connections
+            // Close database connection
             if (databaseManager != null) {
                 databaseManager.close();
+                getLogger().at(Level.INFO).log("Database connection closed");
             }
 
-            getLogger().atInfo().log("NetworkHub plugin shut down successfully");
+            getLogger().at(Level.INFO).log("NetworkHub shutdown complete");
 
         } catch (Exception e) {
-            getLogger().atSevere().withCause(e).log("Error during NetworkHub shutdown");
+            getLogger().at(Level.SEVERE).withCause(e).log("Error during NetworkHub shutdown");
         }
     }
 
-    // Getters for other classes to access managers
+    // === Getters ===
+
     public static NetworkHub getInstance() {
         return instance;
     }
 
-    public NetworkConfig getNetworkConfig() {
-        return networkConfig;
-    }
-
-    public DatabaseConfig getDatabaseConfig() {
-        return databaseConfig;
-    }
-
-    public RedisConfig getRedisConfig() {
-        return redisConfig;
+    public NetworkConfig getConfig() {
+        return config;
     }
 
     public DatabaseManager getDatabaseManager() {
@@ -173,9 +265,51 @@ public class NetworkHub extends JavaPlugin {
         return redisManager;
     }
 
+    public ServerRegistryManager getServerRegistryManager() {
+        return serverRegistryManager;
+    }
+
+    public HeartbeatManager getHeartbeatManager() {
+        return heartbeatManager;
+    }
+
+    public HubManager getHubManager() {
+        return hubManager;
+    }
+
+    public PlayerTrackingManager getPlayerTrackingManager() {
+        return playerTrackingManager;
+    }
+
+    public TransferManager getTransferManager() {
+        return transferManager;
+    }
+
+    public TeleporterManager getTeleporterManager() {
+        return teleporterManager;
+    }
+
+    public QueueManager getQueueManager() {
+        return queueManager;
+    }
+
+    public MessagingManager getMessagingManager() {
+        return messagingManager;
+    }
+
+    public ChatManager getChatManager() {
+        return chatManager;
+    }
+
+    public AnnouncementManager getAnnouncementManager() {
+        return announcementManager;
+    }
+
+    public ModerationManager getModerationManager() {
+        return moderationManager;
+    }
+
     public Gson getGson() {
         return gson;
     }
-
-    // TODO: Add getters for remaining managers as they are implemented
 }

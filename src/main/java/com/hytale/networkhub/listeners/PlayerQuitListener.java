@@ -7,15 +7,16 @@ import com.hypixel.hytale.server.core.Message;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class PlayerQuitListener {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final PlayerTrackingManager trackingManager;
     private final RedisManager redisManager;
     private final String serverId;
 
-    public PlayerQuitListener(Logger logger, PlayerTrackingManager trackingManager,
+    public PlayerQuitListener(HytaleLogger logger, PlayerTrackingManager trackingManager,
                              RedisManager redisManager, String serverId) {
         this.logger = logger;
         this.trackingManager = trackingManager;
@@ -39,10 +40,10 @@ public class PlayerQuitListener {
                 redisManager.publish(redisManager.getChannel("playerQuit"), message);
             }
 
-            logger.fine("Player quit: " + player.getPlayerRef().getUsername());
+            logger.at(Level.FINE).log("Player quit: " + player.getPlayerRef().getUsername());
 
         } catch (Exception e) {
-            logger.severe("Error handling player quit: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Error handling player quit: " + e.getMessage());
             e.printStackTrace();
         }
     }

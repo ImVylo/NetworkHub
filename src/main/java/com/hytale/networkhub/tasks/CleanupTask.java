@@ -3,18 +3,19 @@ package com.hytale.networkhub.tasks;
 import com.hytale.networkhub.config.NetworkConfig;
 import com.hytale.networkhub.database.DatabaseManager;
 
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 /**
  * Periodic cleanup task that removes stale data from the database
  * Runs every 5 minutes to keep the database clean
  */
 public class CleanupTask implements Runnable {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final DatabaseManager dbManager;
 
-    public CleanupTask(Logger logger, NetworkConfig config, DatabaseManager dbManager) {
+    public CleanupTask(HytaleLogger logger, NetworkConfig config, DatabaseManager dbManager) {
         this.logger = logger;
         this.config = config;
         this.dbManager = dbManager;
@@ -23,7 +24,7 @@ public class CleanupTask implements Runnable {
     @Override
     public void run() {
         try {
-            logger.fine("Running database cleanup task...");
+            logger.at(Level.FINE).log("Running database cleanup task...");
 
             int totalCleaned = 0;
 
@@ -47,13 +48,13 @@ public class CleanupTask implements Runnable {
             totalCleaned += cleanupOldTransferHistory();
 
             if (totalCleaned > 0) {
-                logger.info("Cleanup task completed: removed " + totalCleaned + " stale records");
+                logger.at(Level.INFO).log("Cleanup task completed: removed " + totalCleaned + " stale records");
             } else {
-                logger.fine("Cleanup task completed: no stale records found");
+                logger.at(Level.FINE).log("Cleanup task completed: no stale records found");
             }
 
         } catch (Exception e) {
-            logger.warning("Error during cleanup task: " + e.getMessage());
+            logger.at(Level.WARNING).log("Error during cleanup task: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -77,7 +78,7 @@ public class CleanupTask implements Runnable {
 
         int deleted = dbManager.executeUpdate(sql);
         if (deleted > 0) {
-            logger.fine("Cleaned up " + deleted + " old player location records");
+            logger.at(Level.FINE).log("Cleaned up " + deleted + " old player location records");
         }
         return deleted;
     }
@@ -101,7 +102,7 @@ public class CleanupTask implements Runnable {
 
         int deleted = dbManager.executeUpdate(sql);
         if (deleted > 0) {
-            logger.fine("Cleaned up " + deleted + " expired queue entries");
+            logger.at(Level.FINE).log("Cleaned up " + deleted + " expired queue entries");
         }
         return deleted;
     }
@@ -127,7 +128,7 @@ public class CleanupTask implements Runnable {
 
         int deleted = dbManager.executeUpdate(sql, retentionDays);
         if (deleted > 0) {
-            logger.fine("Cleaned up " + deleted + " old chat messages");
+            logger.at(Level.FINE).log("Cleaned up " + deleted + " old chat messages");
         }
         return deleted;
     }
@@ -151,7 +152,7 @@ public class CleanupTask implements Runnable {
 
         int deleted = dbManager.executeUpdate(sql);
         if (deleted > 0) {
-            logger.fine("Cleaned up " + deleted + " old announcements");
+            logger.at(Level.FINE).log("Cleaned up " + deleted + " old announcements");
         }
         return deleted;
     }
@@ -175,7 +176,7 @@ public class CleanupTask implements Runnable {
 
         int deleted = dbManager.executeUpdate(sql);
         if (deleted > 0) {
-            logger.fine("Cleaned up " + deleted + " old transfer history records");
+            logger.at(Level.FINE).log("Cleaned up " + deleted + " old transfer history records");
         }
         return deleted;
     }
@@ -184,7 +185,6 @@ public class CleanupTask implements Runnable {
      * Check if database is MySQL/MariaDB
      */
     private boolean isMySQL() {
-        String dbType = config.getConfig().database.type.toLowerCase();
-        return dbType.equals("mysql") || dbType.equals("mariadb");
+        return dbManager.isMySQL();
     }
 }

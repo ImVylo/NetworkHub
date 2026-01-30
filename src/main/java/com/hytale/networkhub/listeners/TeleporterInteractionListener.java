@@ -10,10 +10,11 @@ import com.hypixel.hytale.server.core.Message;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class TeleporterInteractionListener {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final TeleporterManager teleporterManager;
     private final ServerRegistryManager registryManager;
     private final TransferManager transferManager;
@@ -23,7 +24,7 @@ public class TeleporterInteractionListener {
     private final Map<UUID, PendingTeleport> pendingTeleports = new ConcurrentHashMap<>();
     private final Map<UUID, String> lastBlockPosition = new ConcurrentHashMap<>();
 
-    public TeleporterInteractionListener(Logger logger, TeleporterManager teleporterManager,
+    public TeleporterInteractionListener(HytaleLogger logger, TeleporterManager teleporterManager,
                                         ServerRegistryManager registryManager, TransferManager transferManager,
                                         QueueManager queueManager, NetworkConfig config) {
         this.logger = logger;
@@ -92,7 +93,7 @@ public class TeleporterInteractionListener {
         // Check cooldown
         if (teleporterManager.hasCooldown(playerUuid, teleporter.getTeleporterId())) {
             long remaining = teleporterManager.getRemainingCooldown(playerUuid, teleporter.getTeleporterId());
-            player.sendMessage(Message.raw("§cTeleporter on cooldown: " + remaining + " seconds remaining");
+            player.sendMessage(Message.raw("§cTeleporter on cooldown: " + remaining + " seconds remaining"));
             return;
         }
 
@@ -100,7 +101,7 @@ public class TeleporterInteractionListener {
         ServerRecord destination = registryManager.getServerById(teleporter.getDestinationServerId());
         if (destination == null) {
             player.sendMessage(Message.raw("§cDestination server not found"));
-            logger.warning("Teleporter points to unknown server: " + teleporter.getDestinationServerId());
+            logger.at(Level.WARNING).log("Teleporter points to unknown server: " + teleporter.getDestinationServerId());
             return;
         }
 
@@ -128,7 +129,7 @@ public class TeleporterInteractionListener {
         pendingTeleports.put(playerUuid, pending);
 
         showInitial(player, destination.getServerName(), delay);
-        logger.info("Player " + player.getPlayerRef().getUsername() + " stepped on teleporter to " + destination.getServerName());
+        logger.at(Level.INFO).log("Player " + player.getPlayerRef().getUsername() + " stepped on teleporter to " + destination.getServerName());
     }
 
     private void executeTeleport(Player player, PendingTeleport pending) {
@@ -149,24 +150,24 @@ public class TeleporterInteractionListener {
                 pending.teleporter.getY() + "," + pending.teleporter.getZ());
 
         } catch (Exception e) {
-            logger.severe("Failed to execute teleport: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to execute teleport: " + e.getMessage());
             e.printStackTrace();
             showError(player);
         }
     }
 
     private void showInitial(Player player, String destination, int seconds) {
-        player.sendMessage(Message.raw("§a§lTeleporting to " + destination);
-        player.sendMessage(Message.raw("§7Stand still for " + seconds + " seconds...");
+        player.sendMessage(Message.raw("§a§lTeleporting to " + destination));
+        player.sendMessage(Message.raw("§7Stand still for " + seconds + " seconds..."));
     }
 
     private void showCountdown(Player player, String destination, int seconds) {
         player.sendMessage(Message.raw("§e§lTeleporting to " + destination + " in " + seconds + " second" +
-            (seconds == 1 ? "" : "s") + "...");
+            (seconds == 1 ? "" : "s") + "..."));
     }
 
     private void showSuccess(Player player, String destination) {
-        player.sendMessage(Message.raw("§a§lTeleporting to " + destination + "!");
+        player.sendMessage(Message.raw("§a§lTeleporting to " + destination + "!"));
     }
 
     private void showCanceled(Player player) {

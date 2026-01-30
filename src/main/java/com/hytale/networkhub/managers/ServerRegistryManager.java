@@ -11,17 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import java.util.logging.Level;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 public class ServerRegistryManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final NetworkConfig config;
     private final Map<String, ServerRecord> serverCache = new ConcurrentHashMap<>();
     private long lastCacheUpdate = 0;
     private static final long CACHE_TTL_MS = 30000; // 30 seconds
 
-    public ServerRegistryManager(Logger logger, DatabaseManager dbManager, NetworkConfig config) {
+    public ServerRegistryManager(HytaleLogger logger, DatabaseManager dbManager, NetworkConfig config) {
         this.logger = logger;
         this.dbManager = dbManager;
         this.config = config;
@@ -73,14 +74,14 @@ public class ServerRegistryManager {
         );
 
         if (rows > 0) {
-            logger.info("Registered server: " + serverCfg.serverName + " (" + serverCfg.serverId + ")");
+            logger.at(Level.INFO).log("Registered server: " + serverCfg.serverName + " (" + serverCfg.serverId + ")");
         }
     }
 
     public void unregisterServer(String serverId) {
         String sql = "UPDATE server_health SET status = 'OFFLINE' WHERE server_id = ?";
         dbManager.executeUpdate(sql, serverId);
-        logger.info("Unregistered server: " + serverId);
+        logger.at(Level.INFO).log("Unregistered server: " + serverId);
     }
 
     public ServerRecord getServerById(String serverId) {

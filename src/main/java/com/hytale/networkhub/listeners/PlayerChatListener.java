@@ -5,14 +5,14 @@ import com.hytale.networkhub.managers.MessagingManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 public class PlayerChatListener {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final ChatManager chatManager;
     private final MessagingManager messagingManager;
 
-    public PlayerChatListener(Logger logger, ChatManager chatManager, MessagingManager messagingManager) {
+    public PlayerChatListener(HytaleLogger logger, ChatManager chatManager, MessagingManager messagingManager) {
         this.logger = logger;
         this.chatManager = chatManager;
         this.messagingManager = messagingManager;

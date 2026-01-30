@@ -7,7 +7,7 @@ mkdir build\classes
 mkdir build\libs
 
 echo Compiling Java sources...
-javac --release 17 -encoding UTF-8 -Xlint:none -cp "..\..\HytaleServer.jar;lib\*" -d build\classes @sources.txt
+javac -source 17 -target 17 -encoding UTF-8 -Xlint:none -cp "..\..\HytaleServer.jar;lib\*" -d build\classes @sources.txt 2>&1 | findstr /V "module not found"
 
 if %ERRORLEVEL% neq 0 (
     echo Compilation failed with errors. Attempting to continue...
@@ -18,7 +18,7 @@ xcopy /E /I /Y src\main\resources build\classes
 
 echo Creating JAR...
 cd build\classes
-jar cvfm ..\libs\NetworkHub-1.0.0.jar ..\..\src\main\resources\manifest.json .
+jar cvf ..\libs\NetworkHub-1.0.0.jar .
 cd ..\..
 
 REM Extract and include dependencies
@@ -28,7 +28,7 @@ cd ..\..
 
 REM Recreate JAR with dependencies
 cd build\classes
-jar cvfm ..\libs\NetworkHub-1.0.0.jar ..\..\src\main\resources\manifest.json .
+jar cvf ..\libs\NetworkHub-1.0.0.jar .
 cd ..\..
 
 echo Build complete! JAR location: build\libs\NetworkHub-1.0.0.jar

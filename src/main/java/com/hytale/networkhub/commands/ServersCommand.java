@@ -4,17 +4,17 @@ import com.hytale.networkhub.gui.menus.ServerSelectorGUI;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * Command to open the server selector GUI
  * Allows players to browse and join available servers
  */
 public class ServersCommand {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final ServerSelectorGUI serverSelectorGUI;
 
-    public ServersCommand(Logger logger, ServerSelectorGUI serverSelectorGUI) {
+    public ServersCommand(HytaleLogger logger, ServerSelectorGUI serverSelectorGUI) {
         this.logger = logger;
         this.serverSelectorGUI = serverSelectorGUI;
     }

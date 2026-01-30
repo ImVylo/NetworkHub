@@ -5,17 +5,17 @@ import com.hytale.networkhub.managers.ChatManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * Command to send messages to staff-only network chat
  */
 public class StaffChatCommand {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final ChatManager chatManager;
 
-    public StaffChatCommand(Logger logger, NetworkConfig config, ChatManager chatManager) {
+    public StaffChatCommand(HytaleLogger logger, NetworkConfig config, ChatManager chatManager) {
         this.logger = logger;
         this.config = config;
         this.chatManager = chatManager;

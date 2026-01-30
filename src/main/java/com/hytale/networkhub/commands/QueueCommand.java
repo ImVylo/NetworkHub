@@ -7,18 +7,18 @@ import com.hytale.networkhub.managers.ServerRegistryManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * Command to manage server queues
  */
 public class QueueCommand {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final QueueManager queueManager;
     private final ServerRegistryManager registryManager;
 
-    public QueueCommand(Logger logger, NetworkConfig config, QueueManager queueManager,
+    public QueueCommand(HytaleLogger logger, NetworkConfig config, QueueManager queueManager,
                        ServerRegistryManager registryManager) {
         this.logger = logger;
         this.config = config;
@@ -56,7 +56,7 @@ public class QueueCommand {
                 return listQueues(player);
 
             default:
-                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand);
+                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand));
                 sendHelp(player);
                 return true;
         }
@@ -89,7 +89,7 @@ public class QueueCommand {
 
         ServerRecord server = registryManager.getServerById(serverId);
         if (server == null) {
-            player.sendMessage(Message.raw("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId));
             return true;
         }
 
@@ -118,7 +118,7 @@ public class QueueCommand {
 
         ServerRecord server = registryManager.getServerById(serverId);
         if (server == null) {
-            player.sendMessage(Message.raw("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId));
             return true;
         }
 
@@ -140,7 +140,7 @@ public class QueueCommand {
 
         ServerRecord server = registryManager.getServerById(serverId);
         if (server == null) {
-            player.sendMessage(Message.raw("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId));
             return true;
         }
 
@@ -148,14 +148,14 @@ public class QueueCommand {
         int position = queueManager.getQueuePosition(player.getPlayerRef().getUuid(), serverId);
 
         player.sendMessage(Message.raw("§8§m-------------------------"));
-        player.sendMessage(Message.raw("§6§lQueue Info: §e" + server.getServerName());
+        player.sendMessage(Message.raw("§6§lQueue Info: §e" + server.getServerName()));
         player.sendMessage(Message.raw("§8§m-------------------------"));
-        player.sendMessage(Message.raw("§7Total in queue: §f" + queueSize);
+        player.sendMessage(Message.raw("§7Total in queue: §f" + queueSize));
 
         if (position > 0) {
-            player.sendMessage(Message.raw("§7Your position: §e#" + position);
+            player.sendMessage(Message.raw("§7Your position: §e#" + position));
             int estimated = position * config.getConfig().queue.processIntervalSeconds;
-            player.sendMessage(Message.raw("§7Estimated wait: §f~" + estimated + "s");
+            player.sendMessage(Message.raw("§7Estimated wait: §f~" + estimated + "s"));
         } else {
             player.sendMessage(Message.raw("§7You are not in this queue"));
         }

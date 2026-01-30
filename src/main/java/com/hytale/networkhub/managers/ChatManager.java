@@ -8,16 +8,17 @@ import com.hytale.networkhub.redis.RedisManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class ChatManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final RedisManager redisManager;
     private final NetworkConfig config;
     private final Gson gson;
 
-    public ChatManager(Logger logger, DatabaseManager dbManager, RedisManager redisManager,
+    public ChatManager(HytaleLogger logger, DatabaseManager dbManager, RedisManager redisManager,
                       NetworkConfig config, Gson gson) {
         this.logger = logger;
         this.dbManager = dbManager;
@@ -48,7 +49,7 @@ public class ChatManager {
             persistChatMessage(senderUuid, senderName, "GLOBAL", message);
         }
 
-        logger.fine("Global chat from " + senderName + ": " + message);
+        logger.at(Level.FINE).log("Global chat from " + senderName + ": " + message);
     }
 
     public void sendStaffMessage(UUID senderUuid, String senderName, String message) {
@@ -73,7 +74,7 @@ public class ChatManager {
             persistChatMessage(senderUuid, senderName, "STAFF", message);
         }
 
-        logger.fine("Staff chat from " + senderName + ": " + message);
+        logger.at(Level.FINE).log("Staff chat from " + senderName + ": " + message);
     }
 
     private void persistChatMessage(UUID senderUuid, String senderName, String messageType, String content) {

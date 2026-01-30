@@ -8,15 +8,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class NetworkConfig {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final Path configFile;
     private final Gson gson;
     private Config config;
 
-    public NetworkConfig(Logger logger, Path configDir) {
+    public NetworkConfig(HytaleLogger logger, Path configDir) {
         this.logger = logger;
         this.configFile = configDir.resolve("network-config.json");
         this.gson = new GsonBuilder().setPrettyPrinting().create();
@@ -26,7 +27,7 @@ public class NetworkConfig {
     public void load() {
         try {
             if (!Files.exists(configFile)) {
-                logger.info("Network config not found, creating default");
+                logger.at(Level.INFO).log("Network config not found, creating default");
                 save();
                 return;
             }
@@ -35,14 +36,14 @@ public class NetworkConfig {
                 Config loaded = gson.fromJson(reader, Config.class);
                 if (loaded != null) {
                     this.config = loaded;
-                    logger.info("Loaded network config");
+                    logger.at(Level.INFO).log("Loaded network config");
                 } else {
-                    logger.warning("Network config was empty, using defaults");
+                    logger.at(Level.WARNING).log("Network config was empty, using defaults");
                     save();
                 }
             }
         } catch (IOException e) {
-            logger.severe("Failed to load network config: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to load network config: " + e.getMessage());
         }
     }
 
@@ -51,10 +52,10 @@ public class NetworkConfig {
             Files.createDirectories(configFile.getParent());
             try (BufferedWriter writer = Files.newBufferedWriter(configFile)) {
                 gson.toJson(config, writer);
-                logger.info("Saved network config");
+                logger.at(Level.INFO).log("Saved network config");
             }
         } catch (IOException e) {
-            logger.severe("Failed to save network config: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to save network config: " + e.getMessage());
         }
     }
 

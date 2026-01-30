@@ -6,24 +6,26 @@ import com.hytale.networkhub.database.DatabaseManager;
 import com.hytale.networkhub.redis.RedisManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 
+import com.hypixel.hytale.server.core.Message;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 /**
  * Manages cross-server moderation actions
  * Handles bans, kicks, and mutes across the entire network
  */
 public class ModerationManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final DatabaseManager dbManager;
     private final RedisManager redisManager;
     private final Gson gson;
 
-    public ModerationManager(Logger logger, NetworkConfig config, DatabaseManager dbManager,
+    public ModerationManager(HytaleLogger logger, NetworkConfig config, DatabaseManager dbManager,
                             RedisManager redisManager, Gson gson) {
         this.logger = logger;
         this.config = config;
@@ -95,7 +97,7 @@ public class ModerationManager {
             ? "for " + formatDuration(durationSeconds)
             : "permanently";
 
-        logger.info(String.format("Player %s banned %s by %s: %s",
+        logger.at(Level.INFO).log(String.format("Player %s banned %s by %s: %s",
             targetName, durationType, moderatorName, reason));
     }
 
@@ -133,7 +135,7 @@ public class ModerationManager {
             redisManager.publish(redisManager.getChannel("moderation"), moderationAction);
         }
 
-        logger.info(String.format("Player %s kicked by %s: %s",
+        logger.at(Level.INFO).log(String.format("Player %s kicked by %s: %s",
             targetName, moderatorName, reason));
     }
 
@@ -189,7 +191,7 @@ public class ModerationManager {
             redisManager.publish(redisManager.getChannel("moderation"), moderationAction);
         }
 
-        logger.info(String.format("Player %s muted for %s by %s: %s",
+        logger.at(Level.INFO).log(String.format("Player %s muted for %s by %s: %s",
             targetName, formatDuration(durationSeconds), moderatorName, reason));
     }
 
@@ -222,7 +224,7 @@ public class ModerationManager {
             redisManager.publish(redisManager.getChannel("moderation"), moderationAction);
         }
 
-        logger.info(String.format("Player %s unbanned by %s", targetName, moderatorName));
+        logger.at(Level.INFO).log(String.format("Player %s unbanned by %s", targetName, moderatorName));
     }
 
     /**
@@ -254,7 +256,7 @@ public class ModerationManager {
             redisManager.publish(redisManager.getChannel("moderation"), moderationAction);
         }
 
-        logger.info(String.format("Player %s unmuted by %s", targetName, moderatorName));
+        logger.at(Level.INFO).log(String.format("Player %s unmuted by %s", targetName, moderatorName));
     }
 
     /**
@@ -267,7 +269,12 @@ public class ModerationManager {
             AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)
         """;
 
-        return dbManager.queryInt(sql, playerUuid.toString()) > 0;
+        return dbManager.executeQuery(sql, rs -> {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+            return false;
+        }, playerUuid.toString());
     }
 
     /**
@@ -280,7 +287,12 @@ public class ModerationManager {
             AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP)
         """;
 
-        return dbManager.queryInt(sql, playerUuid.toString()) > 0;
+        return dbManager.executeQuery(sql, rs -> {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+            return false;
+        }, playerUuid.toString());
     }
 
     /**
@@ -294,7 +306,12 @@ public class ModerationManager {
             ORDER BY created_at DESC LIMIT 1
         """;
 
-        return dbManager.queryString(sql, playerUuid.toString());
+        return dbManager.executeQuery(sql, rs -> {
+            if (rs.next()) {
+                return rs.getString("reason");
+            }
+            return null;
+        }, playerUuid.toString());
     }
 
     /**
@@ -329,30 +346,30 @@ public class ModerationManager {
             // Execute the moderation action
             switch (actionType) {
                 case "BAN":
-                    target.sendMessage("§c§lYou have been banned from the network!");
-                    target.sendMessage("§cReason: §f" + reason);
-                    target.sendMessage("§cBanned by: §f" + moderatorName);
+                    target.sendMessage(Message.raw("§c§lYou have been banned from the network!"));
+                    target.sendMessage(Message.raw("§cReason: §f" + reason));
+                    target.sendMessage(Message.raw("§cBanned by: §f" + moderatorName));
                     // TODO: Kick player when API is available
                     // target.kick("Banned: " + reason);
                     break;
 
                 case "KICK":
-                    target.sendMessage("§c§lYou have been kicked from the network!");
-                    target.sendMessage("§cReason: §f" + reason);
-                    target.sendMessage("§cKicked by: §f" + moderatorName);
+                    target.sendMessage(Message.raw("§c§lYou have been kicked from the network!"));
+                    target.sendMessage(Message.raw("§cReason: §f" + reason));
+                    target.sendMessage(Message.raw("§cKicked by: §f" + moderatorName));
                     // TODO: Kick player when API is available
                     // target.kick("Kicked: " + reason);
                     break;
 
                 case "MUTE":
-                    target.sendMessage("§c§lYou have been muted!");
-                    target.sendMessage("§cReason: §f" + reason);
-                    target.sendMessage("§cMuted by: §f" + moderatorName);
+                    target.sendMessage(Message.raw("§c§lYou have been muted!"));
+                    target.sendMessage(Message.raw("§cReason: §f" + reason));
+                    target.sendMessage(Message.raw("§cMuted by: §f" + moderatorName));
                     break;
 
                 case "UNMUTE":
-                    target.sendMessage("§a§lYou have been unmuted!");
-                    target.sendMessage("§aUnmuted by: §f" + moderatorName);
+                    target.sendMessage(Message.raw("§a§lYou have been unmuted!"));
+                    target.sendMessage(Message.raw("§aUnmuted by: §f" + moderatorName));
                     break;
 
                 case "UNBAN":
@@ -361,7 +378,7 @@ public class ModerationManager {
             }
 
         } catch (Exception e) {
-            logger.warning("Failed to handle moderation action: " + e.getMessage());
+            logger.at(Level.WARNING).log("Failed to handle moderation action: " + e.getMessage());
         }
     }
 
@@ -384,7 +401,6 @@ public class ModerationManager {
      * Check if database is MySQL/MariaDB
      */
     private boolean isMySQL() {
-        String dbType = config.getConfig().database.type.toLowerCase();
-        return dbType.equals("mysql") || dbType.equals("mariadb");
+        return dbManager.isMySQL();
     }
 }

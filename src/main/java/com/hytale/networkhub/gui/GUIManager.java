@@ -7,14 +7,15 @@ import com.hypixel.hytale.server.core.Message;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 /**
  * Central manager for all GUI systems in the network
  * Handles GUI registration, opening, and lifecycle management
  */
 public class GUIManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
 
     // Track active GUIs per player
@@ -23,23 +24,23 @@ public class GUIManager {
     // Track GUI instances for cleanup
     private final Map<String, Object> guiInstances = new ConcurrentHashMap<>();
 
-    public GUIManager(Logger logger, NetworkConfig config) {
+    public GUIManager(HytaleLogger logger, NetworkConfig config) {
         this.logger = logger;
         this.config = config;
     }
 
     public void initialize() {
         if (!config.getConfig().gui.enabled) {
-            logger.info("GUI system is disabled in config");
+            logger.at(Level.INFO).log("GUI system is disabled in config");
             return;
         }
 
-        logger.info("Initializing GUI system...");
+        logger.at(Level.INFO).log("Initializing GUI system...");
 
         // GUI instances will be registered by their respective managers
         // This allows lazy initialization and dependency injection
 
-        logger.info("GUI system initialized");
+        logger.at(Level.INFO).log("GUI system initialized");
     }
 
     /**
@@ -47,7 +48,7 @@ public class GUIManager {
      */
     public void registerGUI(String guiId, Object guiInstance) {
         guiInstances.put(guiId, guiInstance);
-        logger.fine("Registered GUI: " + guiId);
+        logger.at(Level.FINE).log("Registered GUI: " + guiId);
     }
 
     /**
@@ -55,7 +56,7 @@ public class GUIManager {
      */
     public void trackGUIOpen(Player player, String guiId) {
         activeGUIs.put(player.getPlayerRef().getUuid(), guiId);
-        logger.fine(player.getPlayerRef().getUsername() + " opened GUI: " + guiId);
+        logger.at(Level.FINE).log(player.getPlayerRef().getUsername() + " opened GUI: " + guiId);
     }
 
     /**
@@ -64,7 +65,7 @@ public class GUIManager {
     public void trackGUIClose(Player player) {
         String guiId = activeGUIs.remove(player.getPlayerRef().getUuid());
         if (guiId != null) {
-            logger.fine(player.getPlayerRef().getUsername() + " closed GUI: " + guiId);
+            logger.at(Level.FINE).log(player.getPlayerRef().getUsername() + " closed GUI: " + guiId);
         }
     }
 
@@ -100,7 +101,7 @@ public class GUIManager {
      * Close all active GUIs (used on shutdown)
      */
     public void closeAllGUIs() {
-        logger.info("Closing all active GUIs...");
+        logger.at(Level.INFO).log("Closing all active GUIs...");
         activeGUIs.clear();
         guiInstances.clear();
     }

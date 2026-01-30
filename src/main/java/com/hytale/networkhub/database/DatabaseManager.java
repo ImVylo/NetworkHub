@@ -8,22 +8,23 @@ import java.sql.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class DatabaseManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseConfig config;
     private HikariDataSource dataSource;
     private final Executor asyncExecutor;
 
-    public DatabaseManager(Logger logger, DatabaseConfig config) {
+    public DatabaseManager(HytaleLogger logger, DatabaseConfig config) {
         this.logger = logger;
         this.config = config;
         this.asyncExecutor = Executors.newFixedThreadPool(4);
     }
 
     public void initialize() throws SQLException {
-        logger.info("Initializing database connection pool...");
+        logger.at(Level.INFO).log("Initializing database connection pool...");
 
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(config.getJdbcUrl());
@@ -47,7 +48,7 @@ public class DatabaseManager {
 
         // Test connection
         try (Connection conn = dataSource.getConnection()) {
-            logger.info("Database connection successful: " + config.getConfig().type);
+            logger.at(Level.INFO).log("Database connection successful: " + config.getConfig().type);
         }
     }
 
@@ -65,7 +66,7 @@ public class DatabaseManager {
             setParameters(stmt, params);
             return stmt.executeUpdate();
         } catch (SQLException e) {
-            logger.severe("Failed to execute update: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to execute update: " + e.getMessage());
             return 0;
         }
     }
@@ -79,7 +80,7 @@ public class DatabaseManager {
                 return handler.handle(rs);
             }
         } catch (SQLException e) {
-            logger.severe("Failed to execute query: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to execute query: " + e.getMessage());
             return null;
         }
     }
@@ -98,10 +99,15 @@ public class DatabaseManager {
         }
     }
 
+    public boolean isMySQL() {
+        String dbType = config.getConfig().type.toLowerCase();
+        return dbType.equals("mysql") || dbType.equals("mariadb");
+    }
+
     public void close() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            logger.info("Database connection pool closed");
+            logger.at(Level.INFO).log("Database connection pool closed");
         }
     }
 

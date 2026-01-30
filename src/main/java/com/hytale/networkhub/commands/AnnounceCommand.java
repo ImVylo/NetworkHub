@@ -5,18 +5,18 @@ import com.hytale.networkhub.gui.menus.AnnouncementCreatorGUI;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * Command to create network-wide announcements
  * Opens the announcement creator GUI or creates quick announcements
  */
 public class AnnounceCommand {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final AnnouncementCreatorGUI announcementCreatorGUI;
 
-    public AnnounceCommand(Logger logger, NetworkConfig config,
+    public AnnounceCommand(HytaleLogger logger, NetworkConfig config,
                           AnnouncementCreatorGUI announcementCreatorGUI) {
         this.logger = logger;
         this.config = config;

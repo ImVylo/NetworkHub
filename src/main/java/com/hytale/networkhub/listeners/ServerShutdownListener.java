@@ -11,20 +11,21 @@ import com.hypixel.hytale.server.core.Message;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 /**
  * Handles graceful server shutdown
  * Evacuates all players to hub servers before shutting down
  */
 public class ServerShutdownListener {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final HubManager hubManager;
     private final TransferManager transferManager;
     private final ServerRegistryManager registryManager;
 
-    public ServerShutdownListener(Logger logger, NetworkConfig config, HubManager hubManager,
+    public ServerShutdownListener(HytaleLogger logger, NetworkConfig config, HubManager hubManager,
                                  TransferManager transferManager, ServerRegistryManager registryManager) {
         this.logger = logger;
         this.config = config;
@@ -39,31 +40,31 @@ public class ServerShutdownListener {
      */
     public void onShutdown(Collection<Player> onlinePlayers) {
         if (!config.getConfig().fallback.enabled || !config.getConfig().fallback.triggerOnShutdown) {
-            logger.info("Fallback on shutdown is disabled, skipping player evacuation");
+            logger.at(Level.INFO).log("Fallback on shutdown is disabled, skipping player evacuation");
             return;
         }
 
         if (onlinePlayers.isEmpty()) {
-            logger.info("No players online, skipping evacuation");
+            logger.at(Level.INFO).log("No players online, skipping evacuation");
             return;
         }
 
-        logger.info("Server shutting down, evacuating " + onlinePlayers.size() + " players to hub...");
+        logger.at(Level.INFO).log("Server shutting down, evacuating " + onlinePlayers.size() + " players to hub...");
 
         try {
             // Select fallback hub
             ServerRecord hub = hubManager.selectFallbackHub();
             if (hub == null) {
-                logger.severe("No hub available for fallback! Players will be disconnected!");
+                logger.at(Level.SEVERE).log("No hub available for fallback! Players will be disconnected!");
                 return;
             }
 
-            logger.info("Transferring players to hub: " + hub.getServerName());
+            logger.at(Level.INFO).log("Transferring players to hub: " + hub.getServerName());
 
             // Small delay before transfer
             int delaySeconds = config.getConfig().fallback.transferDelaySeconds;
             if (delaySeconds > 0) {
-                logger.info("Waiting " + delaySeconds + " seconds before transfer...");
+                logger.at(Level.INFO).log("Waiting " + delaySeconds + " seconds before transfer...");
                 Thread.sleep(delaySeconds * 1000L);
             }
 
@@ -75,7 +76,7 @@ public class ServerShutdownListener {
                 player.sendMessage(Message.raw("§cServer restarting, transferring to hub..."));
 
                 futures[i++] = transferManager.transferPlayer(
-                    player,
+                    player.getPlayerRef(),
                     hub,
                     TransferManager.TransferType.FALLBACK,
                     "Server shutdown"
@@ -85,19 +86,19 @@ public class ServerShutdownListener {
             // Wait for all transfers to complete (max 10 seconds)
             CompletableFuture.allOf(futures).get(10, TimeUnit.SECONDS);
 
-            logger.info("Successfully evacuated all players to hub");
+            logger.at(Level.INFO).log("Successfully evacuated all players to hub");
 
         } catch (Exception e) {
-            logger.severe("Failed to evacuate players during shutdown: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to evacuate players during shutdown: " + e.getMessage());
             e.printStackTrace();
         }
 
         // Mark server as offline in database
         try {
-            registryManager.unregisterServer();
-            logger.info("Server unregistered from network");
+            registryManager.unregisterServer(config.getConfig().server.serverId);
+            logger.at(Level.INFO).log("Server unregistered from network");
         } catch (Exception e) {
-            logger.warning("Failed to unregister server: " + e.getMessage());
+            logger.at(Level.WARNING).log("Failed to unregister server: " + e.getMessage());
         }
     }
 
@@ -107,16 +108,16 @@ public class ServerShutdownListener {
      */
     public void evacuateServer(Collection<Player> onlinePlayers) {
         if (onlinePlayers.isEmpty()) {
-            logger.info("No players to evacuate");
+            logger.at(Level.INFO).log("No players to evacuate");
             return;
         }
 
-        logger.info("Evacuating " + onlinePlayers.size() + " players...");
+        logger.at(Level.INFO).log("Evacuating " + onlinePlayers.size() + " players...");
 
         try {
             ServerRecord hub = hubManager.selectFallbackHub();
             if (hub == null) {
-                logger.severe("No hub available for evacuation!");
+                logger.at(Level.SEVERE).log("No hub available for evacuation!");
                 return;
             }
 
@@ -124,17 +125,17 @@ public class ServerShutdownListener {
                 player.sendMessage(Message.raw("§eYou are being transferred to the hub..."));
 
                 transferManager.transferPlayer(
-                    player,
+                    player.getPlayerRef(),
                     hub,
                     TransferManager.TransferType.FALLBACK,
                     "Manual evacuation"
                 );
             }
 
-            logger.info("Evacuation initiated");
+            logger.at(Level.INFO).log("Evacuation initiated");
 
         } catch (Exception e) {
-            logger.severe("Failed to evacuate players: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Failed to evacuate players: " + e.getMessage());
             e.printStackTrace();
         }
     }

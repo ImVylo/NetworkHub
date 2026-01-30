@@ -9,18 +9,19 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 /**
  * Command to manage teleporter blocks
  */
 public class TeleporterCommand {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final TeleporterManager teleporterManager;
     private final ServerRegistryManager registryManager;
 
-    public TeleporterCommand(Logger logger, NetworkConfig config,
+    public TeleporterCommand(HytaleLogger logger, NetworkConfig config,
                             TeleporterManager teleporterManager,
                             ServerRegistryManager registryManager) {
         this.logger = logger;
@@ -57,7 +58,7 @@ public class TeleporterCommand {
                 return listTeleporters(player);
 
             default:
-                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand);
+                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand));
                 sendHelp(player);
                 return true;
         }
@@ -93,7 +94,7 @@ public class TeleporterCommand {
         // Validate destination server
         ServerRecord destination = registryManager.getServerById(destinationServerId);
         if (destination == null) {
-            player.sendMessage(Message.raw("§cServer not found: " + destinationServerId);
+            player.sendMessage(Message.raw("§cServer not found: " + destinationServerId));
             return true;
         }
 
@@ -108,21 +109,17 @@ public class TeleporterCommand {
         String worldName = "world";
         int x = 0, y = 0, z = 0;
 
-        TeleporterData teleporter = new TeleporterData();
-        teleporter.setServerId(config.getConfig().server.serverId);
-        teleporter.setWorldName(worldName);
-        teleporter.setX(x);
-        teleporter.setY(y);
-        teleporter.setZ(z);
-        teleporter.setDestinationServerId(destinationServerId);
-        teleporter.setDisplayName(displayName);
-        teleporter.setCooldownSeconds(config.getConfig().teleporter.cooldownSeconds);
-        teleporter.setEnabled(true);
-
-        teleporterManager.createTeleporter(teleporter);
+        teleporterManager.createTeleporter(
+            worldName,
+            x, y, z,
+            destinationServerId,
+            displayName,
+            null, // permission (null = everyone)
+            config.getConfig().teleporter.cooldownSeconds
+        );
 
         player.sendMessage(Message.raw(String.format("§aCreated teleporter §e%s §a→ §e%s",
-            displayName, destination.getServerName()));
+            displayName, destination.getServerName())));
 
         return true;
     }
@@ -153,7 +150,7 @@ public class TeleporterCommand {
         );
 
         player.sendMessage(Message.raw("§8§m-------------------------"));
-        player.sendMessage(Message.raw("§6§lTeleporters §7(" + teleporters.size() + ")");
+        player.sendMessage(Message.raw("§6§lTeleporters §7(" + teleporters.size() + ")"));
         player.sendMessage(Message.raw("§8§m-------------------------"));
 
         if (teleporters.isEmpty()) {
@@ -168,7 +165,7 @@ public class TeleporterCommand {
                 tp.getDisplayName(),
                 tp.getDestinationServerId(),
                 tp.getX(), tp.getY(), tp.getZ()
-            ));
+            )));
         }
 
         player.sendMessage(Message.raw("§8§m-------------------------"));

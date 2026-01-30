@@ -6,16 +6,17 @@ import com.hytale.networkhub.database.models.ServerRecord;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class HeartbeatManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final NetworkConfig config;
     private final String serverId;
     private long serverStartTime;
 
-    public HeartbeatManager(Logger logger, DatabaseManager dbManager, NetworkConfig config) {
+    public HeartbeatManager(HytaleLogger logger, NetworkConfig config, DatabaseManager dbManager) {
         this.logger = logger;
         this.dbManager = dbManager;
         this.config = config;
@@ -110,14 +111,14 @@ public class HeartbeatManager {
         );
 
         if (updated > 0) {
-            logger.fine("Marked " + updated + " server(s) as degraded/offline due to missed heartbeats");
+            logger.at(Level.FINE).log("Marked " + updated + " server(s) as degraded/offline due to missed heartbeats");
         }
     }
 
     public void markOffline() {
         String sql = "UPDATE server_health SET status = 'OFFLINE', updated_at = CURRENT_TIMESTAMP WHERE server_id = ?";
         dbManager.executeUpdate(sql, serverId);
-        logger.info("Marked server as offline: " + serverId);
+        logger.at(Level.INFO).log("Marked server as offline: " + serverId);
     }
 
     private double getTPS() {

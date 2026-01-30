@@ -8,7 +8,8 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 /**
  * GUI for creating network-wide announcements
@@ -17,12 +18,12 @@ import java.util.logging.Logger;
 public class AnnouncementCreatorGUI {
     private static final String GUI_ID = "announcement_creator";
 
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final GUIManager guiManager;
     private final AnnouncementManager announcementManager;
 
-    public AnnouncementCreatorGUI(Logger logger, NetworkConfig config, GUIManager guiManager,
+    public AnnouncementCreatorGUI(HytaleLogger logger, NetworkConfig config, GUIManager guiManager,
                                  AnnouncementManager announcementManager) {
         this.logger = logger;
         this.config = config;
@@ -106,8 +107,8 @@ public class AnnouncementCreatorGUI {
             announcementManager.createAnnouncement(announcement);
             player.sendMessage(Message.raw("§aAnnouncement sent to all servers!"));
         } catch (Exception e) {
-            player.sendMessage(Message.raw("§cFailed to create announcement: " + e.getMessage());
-            logger.warning("Failed to create announcement: " + e.getMessage());
+            player.sendMessage(Message.raw("§cFailed to create announcement: " + e.getMessage()));
+            logger.at(Level.WARNING).log("Failed to create announcement: " + e.getMessage());
         }
     }
 
@@ -118,12 +119,12 @@ public class AnnouncementCreatorGUI {
         player.sendMessage(Message.raw("§8§m-------------------------"));
         player.sendMessage(Message.raw("§6§lAnnouncement Preview"));
         player.sendMessage(Message.raw("§8§m-------------------------"));
-        player.sendMessage(Message.raw("§eTitle: §f" + announcement.getTitle());
-        player.sendMessage(Message.raw("§eSubtitle: §f" + announcement.getSubtitle());
-        player.sendMessage(Message.raw("§eAction Bar: §f" + announcement.getActionBar());
-        player.sendMessage(Message.raw("§eDisplay Type: §f" + announcement.getDisplayType());
-        player.sendMessage(Message.raw("§eDuration: §f" + announcement.getDurationSeconds() + "s");
-        player.sendMessage(Message.raw("§ePriority: §f" + announcement.getPriority());
+        player.sendMessage(Message.raw("§eTitle: §f" + announcement.getTitle()));
+        player.sendMessage(Message.raw("§eSubtitle: §f" + announcement.getSubtitle()));
+        player.sendMessage(Message.raw("§eAction Bar: §f" + announcement.getActionBar()));
+        player.sendMessage(Message.raw("§eDisplay Type: §f" + announcement.getDisplayType()));
+        player.sendMessage(Message.raw("§eDuration: §f" + announcement.getDurationSeconds() + "s"));
+        player.sendMessage(Message.raw("§ePriority: §f" + announcement.getPriority()));
         player.sendMessage(Message.raw("§8§m-------------------------"));
     }
 }

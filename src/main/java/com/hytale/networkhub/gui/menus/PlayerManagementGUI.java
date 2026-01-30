@@ -11,7 +11,8 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 /**
  * GUI for managing players across the network
@@ -20,14 +21,14 @@ import java.util.logging.Logger;
 public class PlayerManagementGUI {
     private static final String GUI_ID = "player_management";
 
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final GUIManager guiManager;
     private final PlayerTrackingManager trackingManager;
     private final ServerRegistryManager registryManager;
     private final TransferManager transferManager;
 
-    public PlayerManagementGUI(Logger logger, NetworkConfig config, GUIManager guiManager,
+    public PlayerManagementGUI(HytaleLogger logger, NetworkConfig config, GUIManager guiManager,
                               PlayerTrackingManager trackingManager, ServerRegistryManager registryManager,
                               TransferManager transferManager) {
         this.logger = logger;
@@ -83,12 +84,12 @@ public class PlayerManagementGUI {
         // Get all online players
         List<PlayerLocation> locations = trackingManager.getAllOnlinePlayers();
 
-        admin.sendMessage("§8§m-------------------------");
-        admin.sendMessage("§6§lOnline Players: §f" + locations.size());
-        admin.sendMessage("§8§m-------------------------");
+        admin.sendMessage(Message.raw("§8§m-------------------------"));
+        admin.sendMessage(Message.raw("§6§lOnline Players: §f" + locations.size()));
+        admin.sendMessage(Message.raw("§8§m-------------------------"));
 
         if (locations.isEmpty()) {
-            admin.sendMessage("§7No players online");
+            admin.sendMessage(Message.raw("§7No players online"));
             return;
         }
 
@@ -96,10 +97,10 @@ public class PlayerManagementGUI {
         locations.stream()
             .collect(java.util.stream.Collectors.groupingBy(PlayerLocation::getServerId))
             .forEach((serverId, players) -> {
-                admin.sendMessage(String.format("§e%s §7(%d players):", serverId, players.size()));
-                players.forEach(p -> admin.sendMessage("  §7- §f" + p.getPlayerName()));
+                admin.sendMessage(Message.raw(String.format("§e%s §7(%d players):", serverId, players.size())));
+                players.forEach(p -> admin.sendMessage(Message.raw("  §7- §f" + p.getPlayerName())));
             });
 
-        admin.sendMessage("§8§m-------------------------");
+        admin.sendMessage(Message.raw("§8§m-------------------------"));
     }
 }

@@ -5,16 +5,16 @@ import com.hytale.networkhub.managers.PlayerTrackingManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * Command to find which server a player is on
  */
 public class WhereIsCommand {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final PlayerTrackingManager trackingManager;
 
-    public WhereIsCommand(Logger logger, PlayerTrackingManager trackingManager) {
+    public WhereIsCommand(HytaleLogger logger, PlayerTrackingManager trackingManager) {
         this.logger = logger;
         this.trackingManager = trackingManager;
     }
@@ -34,20 +34,20 @@ public class WhereIsCommand {
         PlayerLocation location = trackingManager.findPlayerByName(targetName);
 
         if (location == null) {
-            player.sendMessage(Message.raw("§cPlayer not found: " + targetName);
+            player.sendMessage(Message.raw("§cPlayer not found: " + targetName));
             return true;
         }
 
         player.sendMessage(Message.raw("§8§m-------------------------"));
         player.sendMessage(Message.raw("§6§lPlayer Location"));
         player.sendMessage(Message.raw("§8§m-------------------------"));
-        player.sendMessage(Message.raw("§ePlayer: §f" + location.getPlayerName());
-        player.sendMessage(Message.raw("§eServer: §a" + location.getServerId());
+        player.sendMessage(Message.raw("§ePlayer: §f" + location.getPlayerName()));
+        player.sendMessage(Message.raw("§eServer: §a" + location.getServerId()));
 
         if (location.getWorldName() != null) {
-            player.sendMessage(Message.raw("§eWorld: §f" + location.getWorldName());
+            player.sendMessage(Message.raw("§eWorld: §f" + location.getWorldName()));
             player.sendMessage(Message.raw(String.format("§ePosition: §f%d, %d, %d",
-                location.getX(), location.getY(), location.getZ()));
+                location.getX(), location.getY(), location.getZ())));
         }
 
         player.sendMessage(Message.raw("§8§m-------------------------"));

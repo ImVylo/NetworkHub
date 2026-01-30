@@ -7,10 +7,11 @@ import com.hytale.networkhub.database.models.ServerRecord;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class QueueManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final NetworkConfig config;
     private final ServerRegistryManager registryManager;
@@ -20,7 +21,7 @@ public class QueueManager {
     // In-memory queue cache
     private final Map<String, PriorityQueue<QueueEntry>> serverQueues = new ConcurrentHashMap<>();
 
-    public QueueManager(Logger logger, DatabaseManager dbManager, NetworkConfig config,
+    public QueueManager(HytaleLogger logger, DatabaseManager dbManager, NetworkConfig config,
                        ServerRegistryManager registryManager, TransferManager transferManager,
                        PlayerTrackingManager trackingManager) {
         this.logger = logger;
@@ -35,12 +36,12 @@ public class QueueManager {
         // Check if server actually has space
         ServerRecord server = registryManager.getServerById(targetServerId);
         if (server == null) {
-            logger.warning("Attempted to queue for unknown server: " + targetServerId);
+            logger.at(Level.WARNING).log("Attempted to queue for unknown server: " + targetServerId);
             return;
         }
 
         if (server.getCurrentPlayers() < server.getMaxPlayers()) {
-            logger.info("Server has space, skipping queue for player " + playerUuid);
+            logger.at(Level.INFO).log("Server has space, skipping queue for player " + playerUuid);
             // TODO: Transfer immediately
             return;
         }
@@ -48,7 +49,7 @@ public class QueueManager {
         // Check queue size limit
         int queueSize = getQueueSize(targetServerId);
         if (queueSize >= config.getConfig().queue.maxQueueSize) {
-            logger.info("Queue full for server " + targetServerId);
+            logger.at(Level.INFO).log("Queue full for server " + targetServerId);
             return;
         }
 
@@ -81,7 +82,7 @@ public class QueueManager {
         QueueEntry entry = new QueueEntry(playerUuid, playerName, targetServerId, priority);
         serverQueues.computeIfAbsent(targetServerId, k -> new PriorityQueue<>()).add(entry);
 
-        logger.info("Added " + playerName + " to queue for " + targetServerId + " (priority: " + priority + ", position: " + (queueSize + 1) + ")");
+        logger.at(Level.INFO).log("Added " + playerName + " to queue for " + targetServerId + " (priority: " + priority + ", position: " + (queueSize + 1) + ")");
     }
 
     public void leaveQueue(UUID playerUuid, String targetServerId) {
@@ -93,7 +94,7 @@ public class QueueManager {
             queue.removeIf(e -> e.getPlayerUuid().equals(playerUuid));
         }
 
-        logger.info("Removed player " + playerUuid + " from queue for " + targetServerId);
+        logger.at(Level.INFO).log("Removed player " + playerUuid + " from queue for " + targetServerId);
     }
 
     public void processQueues() {
@@ -106,7 +107,7 @@ public class QueueManager {
             try {
                 processServerQueue(serverId, queue);
             } catch (Exception e) {
-                logger.severe("Error processing queue for " + serverId + ": " + e.getMessage());
+                logger.at(Level.SEVERE).log("Error processing queue for " + serverId + ": " + e.getMessage());
             }
         }
     }
@@ -118,7 +119,7 @@ public class QueueManager {
         int availableSlots = server.getMaxPlayers() - server.getCurrentPlayers();
         if (availableSlots <= 0) return;
 
-        logger.fine("Processing queue for " + serverId + ": " + availableSlots + " slots available");
+        logger.at(Level.FINE).log("Processing queue for " + serverId + ": " + availableSlots + " slots available");
 
         for (int i = 0; i < availableSlots && !queue.isEmpty(); i++) {
             QueueEntry queueEntry = queue.poll();
@@ -137,7 +138,7 @@ public class QueueManager {
 
             // TODO: Get actual Player object and transfer
             // For now just log and remove from DB
-            logger.info("Queue slot ready for " + queueEntry.getPlayerName() + " -> " + server.getServerName());
+            logger.at(Level.INFO).log("Queue slot ready for " + queueEntry.getPlayerName() + " -> " + server.getServerName());
 
             dbManager.executeUpdate("DELETE FROM server_queues WHERE player_uuid = ? AND server_id = ?",
                 playerUuid.toString(), serverId);

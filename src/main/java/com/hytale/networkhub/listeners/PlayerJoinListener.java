@@ -8,16 +8,17 @@ import com.hypixel.hytale.server.core.Message;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class PlayerJoinListener {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final PlayerTrackingManager trackingManager;
     private final RedisManager redisManager;
     private final Gson gson;
     private final String serverId;
 
-    public PlayerJoinListener(Logger logger, PlayerTrackingManager trackingManager,
+    public PlayerJoinListener(HytaleLogger logger, PlayerTrackingManager trackingManager,
                              RedisManager redisManager, Gson gson, String serverId) {
         this.logger = logger;
         this.trackingManager = trackingManager;
@@ -42,10 +43,10 @@ public class PlayerJoinListener {
                 redisManager.publish(redisManager.getChannel("playerJoin"), message);
             }
 
-            logger.fine("Player joined: " + player.getPlayerRef().getUsername());
+            logger.at(Level.FINE).log("Player joined: " + player.getPlayerRef().getUsername());
 
         } catch (Exception e) {
-            logger.severe("Error handling player join: " + e.getMessage());
+            logger.at(Level.SEVERE).log("Error handling player join: " + e.getMessage());
             e.printStackTrace();
         }
     }

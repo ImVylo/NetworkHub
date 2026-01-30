@@ -6,17 +6,18 @@ import com.hytale.networkhub.database.models.TeleporterData;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class TeleporterManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final NetworkConfig config;
     private final String serverId;
     private final Map<String, TeleporterData> teleporterCache = new ConcurrentHashMap<>();
     private final Map<UUID, Map<Integer, Long>> playerCooldowns = new ConcurrentHashMap<>();
 
-    public TeleporterManager(Logger logger, DatabaseManager dbManager, NetworkConfig config) {
+    public TeleporterManager(HytaleLogger logger, DatabaseManager dbManager, NetworkConfig config) {
         this.logger = logger;
         this.dbManager = dbManager;
         this.config = config;
@@ -56,7 +57,7 @@ public class TeleporterManager {
                 String key = makeKey(tp.getWorldName(), tp.getX(), tp.getY(), tp.getZ());
                 teleporterCache.put(key, tp);
             });
-            logger.info("Loaded " + teleporters.size() + " teleporters for server " + serverId);
+            logger.at(Level.INFO).log("Loaded " + teleporters.size() + " teleporters for server " + serverId);
         }
     }
 
@@ -72,7 +73,7 @@ public class TeleporterManager {
             displayName, permission, cooldownSeconds);
 
         if (rows > 0) {
-            logger.info("Created teleporter at " + worldName + " (" + x + "," + y + "," + z + ")");
+            logger.at(Level.INFO).log("Created teleporter at " + worldName + " (" + x + "," + y + "," + z + ")");
             loadTeleporters(); // Refresh cache
         }
     }
@@ -82,7 +83,7 @@ public class TeleporterManager {
         int rows = dbManager.executeUpdate(sql, serverId, worldName, x, y, z);
 
         if (rows > 0) {
-            logger.info("Removed teleporter at " + worldName + " (" + x + "," + y + "," + z + ")");
+            logger.at(Level.INFO).log("Removed teleporter at " + worldName + " (" + x + "," + y + "," + z + ")");
             String key = makeKey(worldName, x, y, z);
             teleporterCache.remove(key);
         }
@@ -95,6 +96,12 @@ public class TeleporterManager {
 
     public List<TeleporterData> getAllTeleporters() {
         return new ArrayList<>(teleporterCache.values());
+    }
+
+    public List<TeleporterData> getTeleportersByServer(String serverId) {
+        return teleporterCache.values().stream()
+            .filter(tp -> tp.getServerId().equals(serverId))
+            .collect(java.util.stream.Collectors.toList());
     }
 
     public boolean hasCooldown(UUID playerUuid, int teleporterId) {

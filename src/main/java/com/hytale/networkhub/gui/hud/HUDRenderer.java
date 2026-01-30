@@ -6,20 +6,21 @@ import com.hypixel.hytale.server.core.Message;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 /**
  * Handles the actual rendering of the network HUD scoreboard
  * Converts network stats into formatted scoreboard lines
  */
 public class HUDRenderer {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
 
     // Track active scoreboards per player
     private final Map<UUID, Object> activeScoreboards = new ConcurrentHashMap<>();
 
-    public HUDRenderer(Logger logger, NetworkConfig config) {
+    public HUDRenderer(HytaleLogger logger, NetworkConfig config) {
         this.logger = logger;
         this.config = config;
     }
@@ -38,7 +39,7 @@ public class HUDRenderer {
             player.sendMessage(Message.raw("§6§lNETWORK HUD"));
             player.sendMessage(Message.raw("§8§m------------------"));
             for (String line : lines) {
-                player.sendMessage(Message.raw(line);
+                player.sendMessage(Message.raw(line));
             }
             player.sendMessage(Message.raw("§8§m------------------"));
 
@@ -51,7 +52,7 @@ public class HUDRenderer {
             // activeScoreboards.put(player.getPlayerRef().getUuid(), scoreboard);
 
         } catch (Exception e) {
-            logger.warning("Failed to create scoreboard for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
+            logger.at(Level.WARNING).log("Failed to create scoreboard for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
         }
     }
 
@@ -79,7 +80,7 @@ public class HUDRenderer {
             // }
 
         } catch (Exception e) {
-            logger.warning("Failed to update scoreboard for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
+            logger.at(Level.WARNING).log("Failed to update scoreboard for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
         }
     }
 
@@ -156,7 +157,7 @@ public class HUDRenderer {
                 return null;
 
             default:
-                logger.warning("Unknown HUD line type: " + lineType);
+                logger.at(Level.WARNING).log("Unknown HUD line type: " + lineType);
                 return null;
         }
     }

@@ -10,14 +10,15 @@ import com.hypixel.hytale.server.core.Message;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 /**
  * Manages the persistent network HUD (sidebar) for players in hub servers
  * Displays real-time network statistics, player counts, and notifications
  */
 public class NetworkHUD {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final ServerRegistryManager registryManager;
     private final QueueManager queueManager;
@@ -31,7 +32,7 @@ public class NetworkHUD {
     private NetworkStats cachedStats;
     private long lastStatsUpdate = 0;
 
-    public NetworkHUD(Logger logger, NetworkConfig config, ServerRegistryManager registryManager,
+    public NetworkHUD(HytaleLogger logger, NetworkConfig config, ServerRegistryManager registryManager,
                      QueueManager queueManager, MessagingManager messagingManager, HUDRenderer renderer) {
         this.logger = logger;
         this.config = config;
@@ -64,7 +65,7 @@ public class NetworkHUD {
         NetworkStats stats = getNetworkStats();
         renderer.createScoreboard(player, stats);
 
-        logger.fine("Enabled network HUD for " + player.getPlayerRef().getUsername());
+        logger.at(Level.FINE).log("Enabled network HUD for " + player.getPlayerRef().getUsername());
     }
 
     /**
@@ -73,7 +74,7 @@ public class NetworkHUD {
     public void disable(Player player) {
         hudEnabled.remove(player.getPlayerRef().getUuid());
         renderer.removeScoreboard(player);
-        logger.fine("Disabled network HUD for " + player.getPlayerRef().getUsername());
+        logger.at(Level.FINE).log("Disabled network HUD for " + player.getPlayerRef().getUsername());
     }
 
     /**
@@ -114,7 +115,7 @@ public class NetworkHUD {
                 try {
                     renderer.updateScoreboard(player, stats);
                 } catch (Exception e) {
-                    logger.warning("Failed to update HUD for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
+                    logger.at(Level.WARNING).log("Failed to update HUD for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
                 }
             }
         }
@@ -188,7 +189,7 @@ public class NetworkHUD {
             lastStatsUpdate = now;
 
         } catch (Exception e) {
-            logger.warning("Failed to gather network stats: " + e.getMessage());
+            logger.at(Level.WARNING).log("Failed to gather network stats: " + e.getMessage());
             // Return cached stats if available
             if (cachedStats != null) {
                 return cachedStats;

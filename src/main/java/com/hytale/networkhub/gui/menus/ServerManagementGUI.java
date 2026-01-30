@@ -9,7 +9,7 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * GUI for managing servers in the network
@@ -18,13 +18,13 @@ import java.util.logging.Logger;
 public class ServerManagementGUI {
     private static final String GUI_ID = "server_management";
 
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final GUIManager guiManager;
     private final ServerRegistryManager registryManager;
     private final HubManager hubManager;
 
-    public ServerManagementGUI(Logger logger, NetworkConfig config, GUIManager guiManager,
+    public ServerManagementGUI(HytaleLogger logger, NetworkConfig config, GUIManager guiManager,
                               ServerRegistryManager registryManager, HubManager hubManager) {
         this.logger = logger;
         this.config = config;
@@ -87,7 +87,7 @@ public class ServerManagementGUI {
                 server.getCurrentPlayers(),
                 server.getMaxPlayers(),
                 priority
-            ));
+            )));
         }
 
         player.sendMessage(Message.raw("§8§m-------------------------"));
@@ -102,9 +102,9 @@ public class ServerManagementGUI {
      */
     public void handleServerClick(Player player, ServerRecord server) {
         // TODO: Open server edit submenu
-        player.sendMessage(Message.raw("§7Editing server: §e" + server.getServerName());
+        player.sendMessage(Message.raw("§7Editing server: §e" + server.getServerName()));
         player.sendMessage(Message.raw("§7Commands:"));
-        player.sendMessage(Message.raw("§e/network sethub " + server.getServerId() + " [priority]");
-        player.sendMessage(Message.raw("§e/network unsethub " + server.getServerId());
+        player.sendMessage(Message.raw("§e/network sethub " + server.getServerId() + " [priority]"));
+        player.sendMessage(Message.raw("§e/network unsethub " + server.getServerId()));
     }
 }

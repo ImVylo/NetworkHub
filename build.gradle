@@ -16,7 +16,8 @@ repositories {
 }
 
 dependencies {
-    // Hytale Server API
+    // Hytale Server API (unpacked source for better IDE support)
+    compileOnly files('../../Hytale-Server-Unpacked-main')
     compileOnly files('../../HytaleServer.jar')
 
     // Database

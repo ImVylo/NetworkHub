@@ -8,7 +8,8 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 /**
  * GUI for creating and editing teleporter blocks
@@ -16,12 +17,12 @@ import java.util.logging.Logger;
 public class TeleporterEditorGUI {
     private static final String GUI_ID = "teleporter_editor";
 
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final GUIManager guiManager;
     private final TeleporterManager teleporterManager;
 
-    public TeleporterEditorGUI(Logger logger, NetworkConfig config, GUIManager guiManager,
+    public TeleporterEditorGUI(HytaleLogger logger, NetworkConfig config, GUIManager guiManager,
                               TeleporterManager teleporterManager) {
         this.logger = logger;
         this.config = config;
@@ -69,13 +70,13 @@ public class TeleporterEditorGUI {
         if (teleporters.isEmpty()) {
             player.sendMessage(Message.raw("§7No teleporters on this server"));
         } else {
-            player.sendMessage(Message.raw("§aTeleporters: §f" + teleporters.size());
+            player.sendMessage(Message.raw("§aTeleporters: §f" + teleporters.size()));
             for (TeleporterData tp : teleporters) {
                 player.sendMessage(Message.raw(String.format("§7- §e%s §7→ §a%s §7(%d, %d, %d)",
                     tp.getDisplayName(),
                     tp.getDestinationServerId(),
                     tp.getX(), tp.getY(), tp.getZ()
-                ));
+                )));
             }
         }
 

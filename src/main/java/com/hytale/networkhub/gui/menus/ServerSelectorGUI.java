@@ -10,7 +10,7 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * Interactive GUI for players to select and join servers
@@ -19,14 +19,14 @@ import java.util.logging.Logger;
 public class ServerSelectorGUI {
     private static final String GUI_ID = "server_selector";
 
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final GUIManager guiManager;
     private final ServerRegistryManager registryManager;
     private final TransferManager transferManager;
     private final QueueManager queueManager;
 
-    public ServerSelectorGUI(Logger logger, NetworkConfig config, GUIManager guiManager,
+    public ServerSelectorGUI(HytaleLogger logger, NetworkConfig config, GUIManager guiManager,
                             ServerRegistryManager registryManager, TransferManager transferManager,
                             QueueManager queueManager) {
         this.logger = logger;
@@ -84,7 +84,7 @@ public class ServerSelectorGUI {
     private void handleServerClick(Player player, ServerRecord server) {
         // Check if server is online
         if (server.getStatus() != ServerRecord.ServerStatus.ONLINE) {
-            player.sendMessage(Message.raw("§cServer " + server.getServerName() + " is offline!");
+            player.sendMessage(Message.raw("§cServer " + server.getServerName() + " is offline!"));
             return;
         }
 
@@ -102,12 +102,12 @@ public class ServerSelectorGUI {
 
         // Transfer player
         close(player);
-        player.sendMessage(Message.raw("§aTransferring to " + server.getServerName() + "...");
+        player.sendMessage(Message.raw("§aTransferring to " + server.getServerName() + "..."));
 
-        transferManager.transferPlayer(player, server, TransferManager.TransferType.COMMAND, "Server selector")
+        transferManager.transferPlayer(player.getPlayerRef(), server, TransferManager.TransferType.COMMAND, "Server selector")
             .thenAccept(success -> {
                 if (!success) {
-                    player.sendMessage(Message.raw("§cFailed to transfer to " + server.getServerName());
+                    player.sendMessage(Message.raw("§cFailed to transfer to " + server.getServerName()));
                 }
             });
     }
@@ -117,7 +117,7 @@ public class ServerSelectorGUI {
      */
     private void handleFullServer(Player player, ServerRecord server) {
         if (!config.getConfig().queue.enabled) {
-            player.sendMessage(Message.raw("§cServer " + server.getServerName() + " is full!");
+            player.sendMessage(Message.raw("§cServer " + server.getServerName() + " is full!"));
             return;
         }
 
@@ -130,12 +130,12 @@ public class ServerSelectorGUI {
 
             queueManager.joinQueue(player.getPlayerRef().getUuid(), server.getServerId(), priority);
             player.sendMessage(Message.raw(String.format("§eServer is full! You've been added to the queue for §a%s",
-                server.getServerName()));
+                server.getServerName())));
             close(player);
         } else {
             // Prompt player to manually join queue
             player.sendMessage(Message.raw(String.format("§cServer %s is full! Use §e/queue join %s §cto join the queue",
-                server.getServerName(), server.getServerId()));
+                server.getServerName(), server.getServerId())));
         }
     }
 
@@ -163,7 +163,7 @@ public class ServerSelectorGUI {
                 serverType,
                 server.getServerName(),
                 playerInfo,
-                getServerNote(server)));
+                getServerNote(server))));
         }
 
         player.sendMessage(Message.raw("§8§m--------------------"));

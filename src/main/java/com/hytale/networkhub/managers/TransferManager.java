@@ -7,14 +7,15 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class TransferManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final NetworkConfig config;
 
-    public TransferManager(Logger logger, DatabaseManager dbManager, NetworkConfig config) {
+    public TransferManager(HytaleLogger logger, DatabaseManager dbManager, NetworkConfig config) {
         this.logger = logger;
         this.dbManager = dbManager;
         this.config = config;
@@ -26,14 +27,14 @@ public class TransferManager {
             try {
                 // Validate destination
                 if (destination.getStatus() != ServerRecord.ServerStatus.ONLINE) {
-                    logger.warning("Cannot transfer player to offline server: " + destination.getServerName());
+                    logger.at(Level.WARNING).log("Cannot transfer player to offline server: " + destination.getServerName());
                     return false;
                 }
 
                 UUID playerUuid = playerRef.getUuid();
                 String playerName = playerRef.getUsername();
 
-                logger.info(String.format("Transferring player %s to %s (%s:%d)",
+                logger.at(Level.INFO).log(String.format("Transferring player %s to %s (%s:%d)",
                     playerName, destination.getServerName(), destination.getHost(), destination.getPort()));
 
                 // Update player location in database
@@ -54,7 +55,7 @@ public class TransferManager {
                 return true;
 
             } catch (Exception e) {
-                logger.severe("Failed to transfer player: " + e.getMessage());
+                logger.at(Level.SEVERE).log("Failed to transfer player: " + e.getMessage());
                 e.printStackTrace();
                 return false;
             }

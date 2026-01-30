@@ -10,10 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
+import java.util.logging.Level;
 
 public class MessagingManager {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final DatabaseManager dbManager;
     private final RedisManager redisManager;
     private final PlayerTrackingManager trackingManager;
@@ -23,7 +24,7 @@ public class MessagingManager {
     private final Map<UUID, UUID> lastConversations = new ConcurrentHashMap<>();
     private final Map<UUID, Integer> unreadCounts = new ConcurrentHashMap<>();
 
-    public MessagingManager(Logger logger, DatabaseManager dbManager, RedisManager redisManager,
+    public MessagingManager(HytaleLogger logger, DatabaseManager dbManager, RedisManager redisManager,
                            PlayerTrackingManager trackingManager, NetworkConfig config, Gson gson) {
         this.logger = logger;
         this.dbManager = dbManager;
@@ -41,7 +42,7 @@ public class MessagingManager {
         // Find recipient server
         PlayerLocation recipientLoc = trackingManager.findPlayer(recipientUuid);
         if (recipientLoc == null) {
-            logger.info("Player not found: " + recipientUuid);
+            logger.at(Level.INFO).log("Player not found: " + recipientUuid);
             return false;
         }
 
@@ -67,7 +68,7 @@ public class MessagingManager {
             persistChatMessage(senderUuid, senderName, recipientUuid, "DIRECT", message);
         }
 
-        logger.fine("Direct message from " + senderName + " to " + recipientUuid);
+        logger.at(Level.FINE).log("Direct message from " + senderName + " to " + recipientUuid);
         return true;
     }
 

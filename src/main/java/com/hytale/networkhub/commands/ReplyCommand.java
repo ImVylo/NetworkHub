@@ -7,17 +7,17 @@ import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
 import java.util.UUID;
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * Command to reply to the last received direct message
  */
 public class ReplyCommand {
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final MessagingManager messagingManager;
     private final PlayerTrackingManager trackingManager;
 
-    public ReplyCommand(Logger logger, MessagingManager messagingManager,
+    public ReplyCommand(HytaleLogger logger, MessagingManager messagingManager,
                        PlayerTrackingManager trackingManager) {
         this.logger = logger;
         this.messagingManager = messagingManager;
@@ -58,7 +58,7 @@ public class ReplyCommand {
         );
 
         if (success) {
-            player.sendMessage(Message.raw(String.format("§d[To %s] §f%s", recipientLoc.getPlayerName(), message));
+            player.sendMessage(Message.raw(String.format("§d[To %s] §f%s", recipientLoc.getPlayerName(), message)));
         } else {
             player.sendMessage(Message.raw("§cFailed to send message"));
         }

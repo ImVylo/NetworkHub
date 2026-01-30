@@ -5,7 +5,7 @@ import com.hytale.networkhub.gui.GUIManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.Message;
 
-import java.util.logging.Logger;
+import com.hypixel.hytale.logger.HytaleLogger;
 
 /**
  * Main admin control panel GUI
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class AdminPanelGUI {
     private static final String GUI_ID = "admin_panel";
 
-    private final Logger logger;
+    private final HytaleLogger logger;
     private final NetworkConfig config;
     private final GUIManager guiManager;
 
@@ -25,7 +25,7 @@ public class AdminPanelGUI {
     private final QueueViewerGUI queueViewerGUI;
     private final AnnouncementCreatorGUI announcementCreatorGUI;
 
-    public AdminPanelGUI(Logger logger, NetworkConfig config, GUIManager guiManager,
+    public AdminPanelGUI(HytaleLogger logger, NetworkConfig config, GUIManager guiManager,
                         ServerManagementGUI serverManagementGUI, PlayerManagementGUI playerManagementGUI,
                         TeleporterEditorGUI teleporterEditorGUI, QueueViewerGUI queueViewerGUI,
                         AnnouncementCreatorGUI announcementCreatorGUI) {
