@@ -193,6 +193,6 @@ public class QueueManager {
     }
 
     private boolean isMySQL() {
-        return true; // Simplified
+        return dbManager.isMySQL();
     }
 }

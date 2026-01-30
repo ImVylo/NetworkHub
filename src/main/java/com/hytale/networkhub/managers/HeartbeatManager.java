@@ -137,7 +137,6 @@ public class HeartbeatManager {
     }
 
     private boolean isMySQL() {
-        // Simple check - could be improved
-        return !config.getConfig().server.serverId.isEmpty();
+        return dbManager.isMySQL();
     }
 }

@@ -31,22 +31,10 @@ public class ServerRegistryManager {
     public void registerServer() {
         NetworkConfig.ServerConfig serverCfg = config.getConfig().server;
 
-        String sql = """
-            INSERT INTO servers (server_id, server_name, host, port, server_type, is_hub, hub_priority, max_players, registered_at, last_updated)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-            ON CONFLICT (server_id) DO UPDATE SET
-                server_name = EXCLUDED.server_name,
-                host = EXCLUDED.host,
-                port = EXCLUDED.port,
-                server_type = EXCLUDED.server_type,
-                is_hub = EXCLUDED.is_hub,
-                hub_priority = EXCLUDED.hub_priority,
-                max_players = EXCLUDED.max_players,
-                last_updated = CURRENT_TIMESTAMP
-        """;
+        String sql;
 
-        // For MySQL/MariaDB, use different syntax
-        if (!isSQLSupported(sql)) {
+        // Use MySQL/MariaDB syntax
+        if (dbManager.isMySQL()) {
             sql = """
                 INSERT INTO servers (server_id, server_name, host, port, server_type, is_hub, hub_priority, max_players, registered_at, last_updated)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -58,6 +46,21 @@ public class ServerRegistryManager {
                     is_hub = VALUES(is_hub),
                     hub_priority = VALUES(hub_priority),
                     max_players = VALUES(max_players),
+                    last_updated = CURRENT_TIMESTAMP
+            """;
+        } else {
+            // PostgreSQL syntax
+            sql = """
+                INSERT INTO servers (server_id, server_name, host, port, server_type, is_hub, hub_priority, max_players, registered_at, last_updated)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                ON CONFLICT (server_id) DO UPDATE SET
+                    server_name = EXCLUDED.server_name,
+                    host = EXCLUDED.host,
+                    port = EXCLUDED.port,
+                    server_type = EXCLUDED.server_type,
+                    is_hub = EXCLUDED.is_hub,
+                    hub_priority = EXCLUDED.hub_priority,
+                    max_players = EXCLUDED.max_players,
                     last_updated = CURRENT_TIMESTAMP
             """;
         }
@@ -182,8 +185,4 @@ public class ServerRegistryManager {
         return server;
     }
 
-    private boolean isSQLSupported(String sql) {
-        // Check if this is PostgreSQL-style ON CONFLICT
-        return sql.contains("ON CONFLICT");
-    }
 }

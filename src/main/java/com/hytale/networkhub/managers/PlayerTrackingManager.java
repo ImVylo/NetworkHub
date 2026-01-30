@@ -162,6 +162,6 @@ public class PlayerTrackingManager {
     }
 
     private boolean isMySQL() {
-        return true; // Simplified for now
+        return dbManager.isMySQL();
     }
 }
