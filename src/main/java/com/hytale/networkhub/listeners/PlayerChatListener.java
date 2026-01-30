@@ -1,0 +1,38 @@
+package com.hytale.networkhub.listeners;
+
+import com.hytale.networkhub.managers.ChatManager;
+import com.hytale.networkhub.managers.MessagingManager;
+import com.hypixel.hytale.server.core.entity.entities.Player;
+
+import java.util.logging.Logger;
+
+public class PlayerChatListener {
+    private final Logger logger;
+    private final ChatManager chatManager;
+    private final MessagingManager messagingManager;
+
+    public PlayerChatListener(Logger logger, ChatManager chatManager, MessagingManager messagingManager) {
+        this.logger = logger;
+        this.chatManager = chatManager;
+        this.messagingManager = messagingManager;
+    }
+
+    public boolean onPlayerChat(Player player, String message) {
+        // Check for global chat prefix
+        if (message.startsWith("/g ")) {
+            String actualMessage = message.substring(3);
+            chatManager.sendGlobalMessage(player.getUniqueId(), player.getUsername(), actualMessage);
+            return true; // Cancel normal chat
+        }
+
+        // Check for staff chat prefix
+        if (message.startsWith("/sc ")) {
+            String actualMessage = message.substring(4);
+            // TODO: Check if player has staff permission
+            chatManager.sendStaffMessage(player.getUniqueId(), player.getUsername(), actualMessage);
+            return true; // Cancel normal chat
+        }
+
+        return false; // Allow normal chat
+    }
+}

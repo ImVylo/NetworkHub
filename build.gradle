@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.hytale.networkhub'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Hytale Server API
+    compileOnly files('../../HytaleServer.jar')
+
+    // Database
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    implementation 'org.postgresql:postgresql:42.7.1'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.3.2'
+    implementation 'com.mysql:mysql-connector-j:8.3.0'
+
+    // Redis
+    implementation 'redis.clients:jedis:5.1.0'
+
+    // JSON config
+    implementation 'com.google.code.gson:gson:2.10.1'
+}
+
+jar {
+    from sourceSets.main.output
+    from('src/main/resources') {
+        include 'manifest.json'
+    }
+
+    // Bundle dependencies
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    archiveBaseName = 'NetworkHub'
+    archiveVersion = version
+
+    manifest {
+        attributes(
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version
+        )
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+}

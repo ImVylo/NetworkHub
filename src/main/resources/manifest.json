@@ -1,0 +1,19 @@
+{
+  "Group": "Community",
+  "Name": "NetworkHub",
+  "Version": "1.0.0",
+  "Description": "Multi-server network coordination plugin with teleporters, server registry, health monitoring, cross-server player tracking, Redis pub/sub communication, cross-server chat/messaging, queue system for full servers, network-wide announcements, interactive GUIs, persistent network HUD, and cross-server moderation.",
+  "Authors": [
+    {
+      "Name": "Vylo",
+      "Role": "Developer",
+      "Contact": "Discord: ImVylo"
+    }
+  ],
+  "Main": "com.hytale.networkhub.plugin.NetworkHub",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "LoadBefore": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false
+}
