@@ -151,9 +151,10 @@ public class NetworkHub extends JavaPlugin {
             getLogger().at(Level.INFO).log("Loaded teleporters");
 
             // Schedule heartbeat task (every 10 seconds)
+            // Start after 5 seconds to avoid deadlock with server registration
             scheduler.scheduleAtFixedRate(
                 new HeartbeatTask(getLogger(), config, heartbeatManager),
-                0,
+                5,
                 config.getConfig().heartbeat.intervalSeconds,
                 TimeUnit.SECONDS
             );

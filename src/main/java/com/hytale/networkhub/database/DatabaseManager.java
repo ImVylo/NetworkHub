@@ -70,29 +70,69 @@ public class DatabaseManager {
     }
 
     public int executeUpdate(String sql, Object... params) {
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        int maxRetries = 3;
+        int retryDelay = 100; // milliseconds
 
-            setParameters(stmt, params);
-            return stmt.executeUpdate();
-        } catch (SQLException e) {
-            logger.at(Level.SEVERE).log("Failed to execute update: " + e.getMessage());
-            return 0;
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try (Connection conn = getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                setParameters(stmt, params);
+                return stmt.executeUpdate();
+            } catch (SQLException e) {
+                // Check for deadlock error (MySQL/MariaDB error code 1213)
+                if (e.getErrorCode() == 1213 && attempt < maxRetries) {
+                    logger.at(Level.WARNING).log("Deadlock detected, retrying (attempt " + attempt + "/" + maxRetries + ")");
+                    try {
+                        Thread.sleep(retryDelay * attempt); // Exponential backoff
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                    continue;
+                }
+
+                logger.at(Level.SEVERE).log("Failed to execute update: " + e.getMessage());
+                return 0;
+            }
         }
+
+        logger.at(Level.SEVERE).log("Failed to execute update after " + maxRetries + " attempts");
+        return 0;
     }
 
     public <T> T executeQuery(String sql, ResultSetHandler<T> handler, Object... params) {
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        int maxRetries = 3;
+        int retryDelay = 100; // milliseconds
 
-            setParameters(stmt, params);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return handler.handle(rs);
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try (Connection conn = getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                setParameters(stmt, params);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    return handler.handle(rs);
+                }
+            } catch (SQLException e) {
+                // Check for deadlock error (MySQL/MariaDB error code 1213)
+                if (e.getErrorCode() == 1213 && attempt < maxRetries) {
+                    logger.at(Level.WARNING).log("Deadlock detected in query, retrying (attempt " + attempt + "/" + maxRetries + ")");
+                    try {
+                        Thread.sleep(retryDelay * attempt); // Exponential backoff
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                    continue;
+                }
+
+                logger.at(Level.SEVERE).log("Failed to execute query: " + e.getMessage());
+                return null;
             }
-        } catch (SQLException e) {
-            logger.at(Level.SEVERE).log("Failed to execute query: " + e.getMessage());
-            return null;
         }
+
+        logger.at(Level.SEVERE).log("Failed to execute query after " + maxRetries + " attempts");
+        return null;
     }
 
     public CompletableFuture<Integer> executeUpdateAsync(String sql, Object... params) {
