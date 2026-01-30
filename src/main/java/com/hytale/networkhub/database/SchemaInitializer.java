@@ -338,16 +338,17 @@ public class SchemaInitializer {
                 CREATE TABLE IF NOT EXISTS moderation_actions (
                     action_id BIGSERIAL PRIMARY KEY,
                     action_type VARCHAR(32) NOT NULL,
-                    player_uuid VARCHAR(36) NOT NULL,
-                    player_name VARCHAR(64) NOT NULL,
+                    target_uuid VARCHAR(36) NOT NULL,
+                    target_name VARCHAR(64) NOT NULL,
                     moderator_uuid VARCHAR(36) NOT NULL,
                     moderator_name VARCHAR(64) NOT NULL,
                     reason TEXT,
-                    duration_hours INTEGER,
                     server_id VARCHAR(64),
                     active BOOLEAN DEFAULT TRUE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    expires_at TIMESTAMP
+                    expires_at TIMESTAMP,
+                    unbanned_by VARCHAR(36),
+                    unbanned_at TIMESTAMP
                 )
             """;
         } else {
@@ -355,16 +356,17 @@ public class SchemaInitializer {
                 CREATE TABLE IF NOT EXISTS moderation_actions (
                     action_id BIGINT PRIMARY KEY AUTO_INCREMENT,
                     action_type VARCHAR(32) NOT NULL,
-                    player_uuid VARCHAR(36) NOT NULL,
-                    player_name VARCHAR(64) NOT NULL,
+                    target_uuid VARCHAR(36) NOT NULL,
+                    target_name VARCHAR(64) NOT NULL,
                     moderator_uuid VARCHAR(36) NOT NULL,
                     moderator_name VARCHAR(64) NOT NULL,
                     reason TEXT,
-                    duration_hours INTEGER,
                     server_id VARCHAR(64),
                     active BOOLEAN DEFAULT TRUE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    expires_at TIMESTAMP
+                    expires_at TIMESTAMP,
+                    unbanned_by VARCHAR(36),
+                    unbanned_at TIMESTAMP
                 )
             """;
         }
@@ -381,7 +383,7 @@ public class SchemaInitializer {
             "CREATE INDEX IF NOT EXISTS idx_chat_messages_time ON chat_messages(sent_at DESC)",
             "CREATE INDEX IF NOT EXISTS idx_chat_messages_recipient ON chat_messages(recipient_uuid, sent_at DESC)",
             "CREATE INDEX IF NOT EXISTS idx_announcements_time ON announcements(created_at DESC)",
-            "CREATE INDEX IF NOT EXISTS idx_moderation_player ON moderation_actions(player_uuid, active)",
+            "CREATE INDEX IF NOT EXISTS idx_moderation_target ON moderation_actions(target_uuid, active)",
             "CREATE INDEX IF NOT EXISTS idx_transfer_history_player ON transfer_history(player_uuid, transferred_at DESC)"
         };
 
