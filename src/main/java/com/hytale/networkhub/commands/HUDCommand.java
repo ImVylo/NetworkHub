@@ -3,6 +3,7 @@ package com.hytale.networkhub.commands;
 import com.hytale.networkhub.config.NetworkConfig;
 import com.hytale.networkhub.gui.hud.NetworkHUD;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 
@@ -25,7 +26,7 @@ public class HUDCommand {
      */
     public boolean execute(Player player, String[] args) {
         if (!config.getConfig().hud.enabled) {
-            player.sendMessage("§cHUD system is disabled");
+            player.sendMessage(Message.raw("§cHUD system is disabled"));
             return true;
         }
 
@@ -50,7 +51,7 @@ public class HUDCommand {
                 return reloadHUD(player);
 
             default:
-                player.sendMessage("§cUnknown subcommand: " + subcommand);
+                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand);
                 sendHelp(player);
                 return true;
         }
@@ -60,14 +61,14 @@ public class HUDCommand {
      * Send help message
      */
     private void sendHelp(Player player) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lHUD Commands");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§e/hud toggle §7- Toggle HUD on/off");
-        player.sendMessage("§e/hud on §7- Enable HUD");
-        player.sendMessage("§e/hud off §7- Disable HUD");
-        player.sendMessage("§e/hud reload §7- Reload HUD settings");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lHUD Commands"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§e/hud toggle §7- Toggle HUD on/off"));
+        player.sendMessage(Message.raw("§e/hud on §7- Enable HUD"));
+        player.sendMessage(Message.raw("§e/hud off §7- Disable HUD"));
+        player.sendMessage(Message.raw("§e/hud reload §7- Reload HUD settings"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
     }
 
     /**
@@ -77,9 +78,9 @@ public class HUDCommand {
         boolean enabled = networkHUD.toggle(player);
 
         if (enabled) {
-            player.sendMessage("§aNetwork HUD enabled");
+            player.sendMessage(Message.raw("§aNetwork HUD enabled"));
         } else {
-            player.sendMessage("§7Network HUD disabled");
+            player.sendMessage(Message.raw("§7Network HUD disabled"));
         }
 
         return true;
@@ -89,13 +90,13 @@ public class HUDCommand {
      * Enable HUD display
      */
     private boolean enableHUD(Player player) {
-        if (networkHUD.isEnabled(player.getUniqueId())) {
-            player.sendMessage("§eHUD is already enabled");
+        if (networkHUD.isEnabled(player.getPlayerRef().getUuid())) {
+            player.sendMessage(Message.raw("§eHUD is already enabled"));
             return true;
         }
 
         networkHUD.enable(player);
-        player.sendMessage("§aNetwork HUD enabled");
+        player.sendMessage(Message.raw("§aNetwork HUD enabled"));
 
         return true;
     }
@@ -104,13 +105,13 @@ public class HUDCommand {
      * Disable HUD display
      */
     private boolean disableHUD(Player player) {
-        if (!networkHUD.isEnabled(player.getUniqueId())) {
-            player.sendMessage("§eHUD is already disabled");
+        if (!networkHUD.isEnabled(player.getPlayerRef().getUuid())) {
+            player.sendMessage(Message.raw("§eHUD is already disabled"));
             return true;
         }
 
         networkHUD.disable(player);
-        player.sendMessage("§7Network HUD disabled");
+        player.sendMessage(Message.raw("§7Network HUD disabled"));
 
         return true;
     }
@@ -121,12 +122,12 @@ public class HUDCommand {
     private boolean reloadHUD(Player player) {
         // TODO: Check admin permission
         // if (!player.hasPermission("networkhub.admin")) {
-        //     player.sendMessage("§cYou don't have permission to reload HUD settings");
+        //     player.sendMessage(Message.raw("§cYou don't have permission to reload HUD settings"));
         //     return true;
         // }
 
         networkHUD.refreshStats();
-        player.sendMessage("§aHUD settings reloaded");
+        player.sendMessage(Message.raw("§aHUD settings reloaded"));
 
         return true;
     }

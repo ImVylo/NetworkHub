@@ -3,6 +3,7 @@ package com.hytale.networkhub.commands;
 import com.hytale.networkhub.config.NetworkConfig;
 import com.hytale.networkhub.managers.ChatManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 
@@ -25,19 +26,19 @@ public class GlobalChatCommand {
      */
     public boolean execute(Player player, String[] args) {
         if (!config.getConfig().messaging.globalChatEnabled) {
-            player.sendMessage("§cGlobal chat is disabled");
+            player.sendMessage(Message.raw("§cGlobal chat is disabled"));
             return true;
         }
 
         if (args.length < 1) {
-            player.sendMessage("§cUsage: /g <message>");
+            player.sendMessage(Message.raw("§cUsage: /g <message>"));
             return true;
         }
 
         String message = String.join(" ", args);
 
         // Send to global chat
-        chatManager.sendGlobalMessage(player.getUniqueId(), player.getUsername(), message);
+        chatManager.sendGlobalMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), message);
 
         return true;
     }

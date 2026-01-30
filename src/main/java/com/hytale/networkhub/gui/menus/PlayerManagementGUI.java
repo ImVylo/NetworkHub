@@ -8,6 +8,7 @@ import com.hytale.networkhub.managers.PlayerTrackingManager;
 import com.hytale.networkhub.managers.ServerRegistryManager;
 import com.hytale.networkhub.managers.TransferManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -44,7 +45,7 @@ public class PlayerManagementGUI {
      */
     public void open(Player player) {
         if (!guiManager.isEnabled()) {
-            player.sendMessage("§cGUI system is disabled");
+            player.sendMessage(Message.raw("§cGUI system is disabled"));
             return;
         }
 
@@ -65,14 +66,14 @@ public class PlayerManagementGUI {
      * Display player management as chat (fallback)
      */
     private void displayPlayerManagement(Player player) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lPlayer Management");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§7Commands:");
-        player.sendMessage("§e/network transfer <player> <server>");
-        player.sendMessage("§e/network transferall <server>");
-        player.sendMessage("§e/whereis <player>");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lPlayer Management"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§7Commands:"));
+        player.sendMessage(Message.raw("§e/network transfer <player> <server>"));
+        player.sendMessage(Message.raw("§e/network transferall <server>"));
+        player.sendMessage(Message.raw("§e/whereis <player>"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
     }
 
     /**

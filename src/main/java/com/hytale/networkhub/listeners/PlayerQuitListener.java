@@ -3,6 +3,7 @@ package com.hytale.networkhub.listeners;
 import com.hytale.networkhub.managers.PlayerTrackingManager;
 import com.hytale.networkhub.redis.RedisManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,20 +26,20 @@ public class PlayerQuitListener {
     public void onPlayerQuit(Player player) {
         try {
             // Update last seen in database
-            trackingManager.trackQuit(player.getUniqueId());
+            trackingManager.trackQuit(player.getPlayerRef().getUuid());
 
             // Publish to Redis
             if (redisManager.isEnabled()) {
                 Map<String, Object> message = new HashMap<>();
-                message.put("playerUuid", player.getUniqueId().toString());
-                message.put("playerName", player.getUsername());
+                message.put("playerUuid", player.getPlayerRef().getUuid().toString());
+                message.put("playerName", player.getPlayerRef().getUsername());
                 message.put("serverId", serverId);
                 message.put("timestamp", System.currentTimeMillis());
 
                 redisManager.publish(redisManager.getChannel("playerQuit"), message);
             }
 
-            logger.fine("Player quit: " + player.getUsername());
+            logger.fine("Player quit: " + player.getPlayerRef().getUsername());
 
         } catch (Exception e) {
             logger.severe("Error handling player quit: " + e.getMessage());

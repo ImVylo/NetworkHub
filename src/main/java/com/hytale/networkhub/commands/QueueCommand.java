@@ -5,6 +5,7 @@ import com.hytale.networkhub.database.models.ServerRecord;
 import com.hytale.networkhub.managers.QueueManager;
 import com.hytale.networkhub.managers.ServerRegistryManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 
@@ -30,7 +31,7 @@ public class QueueCommand {
      */
     public boolean execute(Player player, String[] args) {
         if (!config.getConfig().queue.enabled) {
-            player.sendMessage("§cQueue system is disabled");
+            player.sendMessage(Message.raw("§cQueue system is disabled"));
             return true;
         }
 
@@ -55,7 +56,7 @@ public class QueueCommand {
                 return listQueues(player);
 
             default:
-                player.sendMessage("§cUnknown subcommand: " + subcommand);
+                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand);
                 sendHelp(player);
                 return true;
         }
@@ -65,14 +66,14 @@ public class QueueCommand {
      * Send help message
      */
     private void sendHelp(Player player) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lQueue Commands");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§e/queue join <server> §7- Join queue");
-        player.sendMessage("§e/queue leave <server> §7- Leave queue");
-        player.sendMessage("§e/queue info <server> §7- Show queue info");
-        player.sendMessage("§e/queue list §7- List your queues");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lQueue Commands"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§e/queue join <server> §7- Join queue"));
+        player.sendMessage(Message.raw("§e/queue leave <server> §7- Leave queue"));
+        player.sendMessage(Message.raw("§e/queue info <server> §7- Show queue info"));
+        player.sendMessage(Message.raw("§e/queue list §7- List your queues"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
     }
 
     /**
@@ -80,7 +81,7 @@ public class QueueCommand {
      */
     private boolean joinQueue(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /queue join <server>");
+            player.sendMessage(Message.raw("§cUsage: /queue join <server>"));
             return true;
         }
 
@@ -88,7 +89,7 @@ public class QueueCommand {
 
         ServerRecord server = registryManager.getServerById(serverId);
         if (server == null) {
-            player.sendMessage("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId);
             return true;
         }
 
@@ -99,7 +100,7 @@ public class QueueCommand {
         //     priority = config.getConfig().queue.vipPriority;
         // }
 
-        queueManager.joinQueue(player.getUniqueId(), serverId, priority);
+        queueManager.joinQueue(player.getPlayerRef().getUuid(), serverId, priority);
 
         return true;
     }
@@ -109,7 +110,7 @@ public class QueueCommand {
      */
     private boolean leaveQueue(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /queue leave <server>");
+            player.sendMessage(Message.raw("§cUsage: /queue leave <server>"));
             return true;
         }
 
@@ -117,11 +118,11 @@ public class QueueCommand {
 
         ServerRecord server = registryManager.getServerById(serverId);
         if (server == null) {
-            player.sendMessage("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId);
             return true;
         }
 
-        queueManager.leaveQueue(player.getUniqueId(), serverId);
+        queueManager.leaveQueue(player.getPlayerRef().getUuid(), serverId);
 
         return true;
     }
@@ -131,7 +132,7 @@ public class QueueCommand {
      */
     private boolean queueInfo(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /queue info <server>");
+            player.sendMessage(Message.raw("§cUsage: /queue info <server>"));
             return true;
         }
 
@@ -139,27 +140,27 @@ public class QueueCommand {
 
         ServerRecord server = registryManager.getServerById(serverId);
         if (server == null) {
-            player.sendMessage("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId);
             return true;
         }
 
         int queueSize = queueManager.getQueueSize(serverId);
-        int position = queueManager.getQueuePosition(player.getUniqueId(), serverId);
+        int position = queueManager.getQueuePosition(player.getPlayerRef().getUuid(), serverId);
 
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lQueue Info: §e" + server.getServerName());
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§7Total in queue: §f" + queueSize);
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lQueue Info: §e" + server.getServerName());
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§7Total in queue: §f" + queueSize);
 
         if (position > 0) {
-            player.sendMessage("§7Your position: §e#" + position);
+            player.sendMessage(Message.raw("§7Your position: §e#" + position);
             int estimated = position * config.getConfig().queue.processIntervalSeconds;
-            player.sendMessage("§7Estimated wait: §f~" + estimated + "s");
+            player.sendMessage(Message.raw("§7Estimated wait: §f~" + estimated + "s");
         } else {
-            player.sendMessage("§7You are not in this queue");
+            player.sendMessage(Message.raw("§7You are not in this queue"));
         }
 
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
 
         return true;
     }
@@ -169,7 +170,7 @@ public class QueueCommand {
      */
     private boolean listQueues(Player player) {
         // TODO: Implement when QueueManager has getAllPlayerQueues method
-        player.sendMessage("§7Queue list coming soon...");
+        player.sendMessage(Message.raw("§7Queue list coming soon..."));
         return true;
     }
 }

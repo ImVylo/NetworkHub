@@ -6,6 +6,7 @@ import com.hytale.networkhub.gui.GUIManager;
 import com.hytale.networkhub.managers.HubManager;
 import com.hytale.networkhub.managers.ServerRegistryManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -40,7 +41,7 @@ public class ServerManagementGUI {
      */
     public void open(Player player) {
         if (!guiManager.isEnabled()) {
-            player.sendMessage("§cGUI system is disabled");
+            player.sendMessage(Message.raw("§cGUI system is disabled"));
             return;
         }
 
@@ -64,12 +65,12 @@ public class ServerManagementGUI {
      * Display server management menu as chat (fallback)
      */
     private void displayServerManagement(Player player, List<ServerRecord> servers) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lServer Management");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lServer Management"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
 
         if (servers.isEmpty()) {
-            player.sendMessage("§cNo servers registered");
+            player.sendMessage(Message.raw("§cNo servers registered"));
             return;
         }
 
@@ -78,7 +79,7 @@ public class ServerManagementGUI {
             String hubBadge = server.isHub() ? " §e[HUB]" : "";
             String priority = server.isHub() ? " §7(Priority: " + server.getHubPriority() + ")" : "";
 
-            player.sendMessage(String.format("%s%s%s §7- %s%d/%d%s",
+            player.sendMessage(Message.raw(String.format("%s%s%s §7- %s%d/%d%s",
                 statusColor,
                 server.getServerName(),
                 hubBadge,
@@ -89,11 +90,11 @@ public class ServerManagementGUI {
             ));
         }
 
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§7Commands:");
-        player.sendMessage("§e/network sethub <server> [priority]");
-        player.sendMessage("§e/network unsethub <server>");
-        player.sendMessage("§e/network listservers");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§7Commands:"));
+        player.sendMessage(Message.raw("§e/network sethub <server> [priority]"));
+        player.sendMessage(Message.raw("§e/network unsethub <server>"));
+        player.sendMessage(Message.raw("§e/network listservers"));
     }
 
     /**
@@ -101,9 +102,9 @@ public class ServerManagementGUI {
      */
     public void handleServerClick(Player player, ServerRecord server) {
         // TODO: Open server edit submenu
-        player.sendMessage("§7Editing server: §e" + server.getServerName());
-        player.sendMessage("§7Commands:");
-        player.sendMessage("§e/network sethub " + server.getServerId() + " [priority]");
-        player.sendMessage("§e/network unsethub " + server.getServerId());
+        player.sendMessage(Message.raw("§7Editing server: §e" + server.getServerName());
+        player.sendMessage(Message.raw("§7Commands:"));
+        player.sendMessage(Message.raw("§e/network sethub " + server.getServerId() + " [priority]");
+        player.sendMessage(Message.raw("§e/network unsethub " + server.getServerId());
     }
 }

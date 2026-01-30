@@ -4,6 +4,7 @@ import com.hytale.networkhub.config.NetworkConfig;
 import com.hytale.networkhub.database.models.ServerRecord;
 import com.hytale.networkhub.managers.*;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -38,7 +39,7 @@ public class NetworkCommand {
         // Check permission
         // TODO: Implement when permission system is available
         // if (!player.hasPermission("networkhub.admin")) {
-        //     player.sendMessage("§cYou don't have permission to use this command");
+        //     player.sendMessage(Message.raw("§cYou don't have permission to use this command"));
         //     return true;
         // }
 
@@ -80,7 +81,7 @@ public class NetworkCommand {
                 return reloadConfig(player);
 
             default:
-                player.sendMessage("§cUnknown subcommand: " + subcommand);
+                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand);
                 sendHelp(player);
                 return true;
         }
@@ -90,19 +91,19 @@ public class NetworkCommand {
      * Send help message
      */
     private void sendHelp(Player player) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lNetworkHub Commands");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§e/network listservers §7- List all servers");
-        player.sendMessage("§e/network sethub <server> [priority] §7- Set hub");
-        player.sendMessage("§e/network unsethub <server> §7- Remove hub");
-        player.sendMessage("§e/network listhubs §7- List all hubs");
-        player.sendMessage("§e/network transfer <player> <server> §7- Transfer player");
-        player.sendMessage("§e/network transferall <server> §7- Transfer all players");
-        player.sendMessage("§e/network register <id> <host> <port> <name> §7- Register server");
-        player.sendMessage("§e/network unregister <server> §7- Unregister server");
-        player.sendMessage("§e/network reload §7- Reload config");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lNetworkHub Commands"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§e/network listservers §7- List all servers"));
+        player.sendMessage(Message.raw("§e/network sethub <server> [priority] §7- Set hub"));
+        player.sendMessage(Message.raw("§e/network unsethub <server> §7- Remove hub"));
+        player.sendMessage(Message.raw("§e/network listhubs §7- List all hubs"));
+        player.sendMessage(Message.raw("§e/network transfer <player> <server> §7- Transfer player"));
+        player.sendMessage(Message.raw("§e/network transferall <server> §7- Transfer all players"));
+        player.sendMessage(Message.raw("§e/network register <id> <host> <port> <name> §7- Register server"));
+        player.sendMessage(Message.raw("§e/network unregister <server> §7- Unregister server"));
+        player.sendMessage(Message.raw("§e/network reload §7- Reload config"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
     }
 
     /**
@@ -111,12 +112,12 @@ public class NetworkCommand {
     private boolean listServers(Player player) {
         List<ServerRecord> servers = registryManager.getAllServers();
 
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lNetwork Servers §7(" + servers.size() + ")");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lNetwork Servers §7(" + servers.size() + ")");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
 
         if (servers.isEmpty()) {
-            player.sendMessage("§7No servers registered");
+            player.sendMessage(Message.raw("§7No servers registered"));
             return true;
         }
 
@@ -124,7 +125,7 @@ public class NetworkCommand {
             String statusColor = getStatusColor(server.getStatus());
             String hubBadge = server.isHub() ? " §e[HUB:" + server.getHubPriority() + "]" : "";
 
-            player.sendMessage(String.format(
+            player.sendMessage(Message.raw(String.format(
                 "%s● §e%s §7(%s)%s §7- §f%d/%d §7players",
                 statusColor,
                 server.getServerName(),
@@ -135,7 +136,7 @@ public class NetworkCommand {
             ));
         }
 
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
         return true;
     }
 
@@ -144,7 +145,7 @@ public class NetworkCommand {
      */
     private boolean setHub(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /network sethub <server> [priority]");
+            player.sendMessage(Message.raw("§cUsage: /network sethub <server> [priority]"));
             return true;
         }
 
@@ -153,12 +154,12 @@ public class NetworkCommand {
 
         ServerRecord server = registryManager.getServerById(serverId);
         if (server == null) {
-            player.sendMessage("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId);
             return true;
         }
 
         hubManager.setHub(serverId, priority);
-        player.sendMessage(String.format("§aSet §e%s §aas hub with priority §e%d",
+        player.sendMessage(Message.raw(String.format("§aSet §e%s §aas hub with priority §e%d",
             server.getServerName(), priority));
 
         return true;
@@ -169,7 +170,7 @@ public class NetworkCommand {
      */
     private boolean unsetHub(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /network unsethub <server>");
+            player.sendMessage(Message.raw("§cUsage: /network unsethub <server>"));
             return true;
         }
 
@@ -177,12 +178,12 @@ public class NetworkCommand {
 
         ServerRecord server = registryManager.getServerById(serverId);
         if (server == null) {
-            player.sendMessage("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId);
             return true;
         }
 
         hubManager.unsetHub(serverId);
-        player.sendMessage("§aRemoved hub designation from §e" + server.getServerName());
+        player.sendMessage(Message.raw("§aRemoved hub designation from §e" + server.getServerName());
 
         return true;
     }
@@ -193,18 +194,18 @@ public class NetworkCommand {
     private boolean listHubs(Player player) {
         List<ServerRecord> hubs = registryManager.getHubServers();
 
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lHub Servers §7(" + hubs.size() + ")");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lHub Servers §7(" + hubs.size() + ")");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
 
         if (hubs.isEmpty()) {
-            player.sendMessage("§7No hubs configured");
+            player.sendMessage(Message.raw("§7No hubs configured"));
             return true;
         }
 
         for (ServerRecord hub : hubs) {
             String statusColor = getStatusColor(hub.getStatus());
-            player.sendMessage(String.format(
+            player.sendMessage(Message.raw(String.format(
                 "%s● §e%s §7(Priority: §f%d§7) - §f%d/%d §7players",
                 statusColor,
                 hub.getServerName(),
@@ -214,7 +215,7 @@ public class NetworkCommand {
             ));
         }
 
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
         return true;
     }
 
@@ -223,7 +224,7 @@ public class NetworkCommand {
      */
     private boolean transferPlayer(Player player, String[] args) {
         if (args.length < 3) {
-            player.sendMessage("§cUsage: /network transfer <player> <server>");
+            player.sendMessage(Message.raw("§cUsage: /network transfer <player> <server>"));
             return true;
         }
 
@@ -234,24 +235,24 @@ public class NetworkCommand {
         // TODO: Get player from server when API is available
         // Player target = server.getPlayer(playerName);
         // if (target == null) {
-        //     player.sendMessage("§cPlayer not found: " + playerName);
+        //     player.sendMessage(Message.raw("§cPlayer not found: " + playerName);
         //     return true;
         // }
 
         // Get destination server
         ServerRecord destination = registryManager.getServerById(serverId);
         if (destination == null) {
-            player.sendMessage("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId);
             return true;
         }
 
         if (destination.getStatus() != ServerRecord.ServerStatus.ONLINE) {
-            player.sendMessage("§cServer " + destination.getServerName() + " is offline");
+            player.sendMessage(Message.raw("§cServer " + destination.getServerName() + " is offline");
             return true;
         }
 
         // TODO: Transfer player when API is available
-        player.sendMessage(String.format("§aTransferring §e%s §ato §e%s§a...",
+        player.sendMessage(Message.raw(String.format("§aTransferring §e%s §ato §e%s§a...",
             playerName, destination.getServerName()));
 
         return true;
@@ -262,7 +263,7 @@ public class NetworkCommand {
      */
     private boolean transferAllPlayers(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /network transferall <server>");
+            player.sendMessage(Message.raw("§cUsage: /network transferall <server>"));
             return true;
         }
 
@@ -270,17 +271,17 @@ public class NetworkCommand {
 
         ServerRecord destination = registryManager.getServerById(serverId);
         if (destination == null) {
-            player.sendMessage("§cServer not found: " + serverId);
+            player.sendMessage(Message.raw("§cServer not found: " + serverId);
             return true;
         }
 
         if (destination.getStatus() != ServerRecord.ServerStatus.ONLINE) {
-            player.sendMessage("§cServer " + destination.getServerName() + " is offline");
+            player.sendMessage(Message.raw("§cServer " + destination.getServerName() + " is offline");
             return true;
         }
 
         // TODO: Get online players and transfer them
-        player.sendMessage(String.format("§aTransferring all players to §e%s§a...",
+        player.sendMessage(Message.raw(String.format("§aTransferring all players to §e%s§a...",
             destination.getServerName()));
 
         return true;
@@ -291,7 +292,7 @@ public class NetworkCommand {
      */
     private boolean registerServer(Player player, String[] args) {
         if (args.length < 5) {
-            player.sendMessage("§cUsage: /network register <id> <host> <port> <name>");
+            player.sendMessage(Message.raw("§cUsage: /network register <id> <host> <port> <name>"));
             return true;
         }
 
@@ -301,7 +302,7 @@ public class NetworkCommand {
         String name = String.join(" ", java.util.Arrays.copyOfRange(args, 4, args.length));
 
         // TODO: Implement manual server registration
-        player.sendMessage("§aServer registration coming soon...");
+        player.sendMessage(Message.raw("§aServer registration coming soon..."));
 
         return true;
     }
@@ -311,14 +312,14 @@ public class NetworkCommand {
      */
     private boolean unregisterServer(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /network unregister <server>");
+            player.sendMessage(Message.raw("§cUsage: /network unregister <server>"));
             return true;
         }
 
         String serverId = args[1];
 
         // TODO: Implement server unregistration
-        player.sendMessage("§aServer unregistration coming soon...");
+        player.sendMessage(Message.raw("§aServer unregistration coming soon..."));
 
         return true;
     }
@@ -328,7 +329,7 @@ public class NetworkCommand {
      */
     private boolean reloadConfig(Player player) {
         // TODO: Implement config reload
-        player.sendMessage("§aConfiguration reload coming soon...");
+        player.sendMessage(Message.raw("§aConfiguration reload coming soon..."));
         return true;
     }
 

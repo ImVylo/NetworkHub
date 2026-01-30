@@ -2,6 +2,7 @@ package com.hytale.networkhub.gui;
 
 import com.hytale.networkhub.config.NetworkConfig;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.Map;
 import java.util.UUID;
@@ -53,17 +54,17 @@ public class GUIManager {
      * Track that a player has opened a specific GUI
      */
     public void trackGUIOpen(Player player, String guiId) {
-        activeGUIs.put(player.getUniqueId(), guiId);
-        logger.fine(player.getUsername() + " opened GUI: " + guiId);
+        activeGUIs.put(player.getPlayerRef().getUuid(), guiId);
+        logger.fine(player.getPlayerRef().getUsername() + " opened GUI: " + guiId);
     }
 
     /**
      * Track that a player has closed their GUI
      */
     public void trackGUIClose(Player player) {
-        String guiId = activeGUIs.remove(player.getUniqueId());
+        String guiId = activeGUIs.remove(player.getPlayerRef().getUuid());
         if (guiId != null) {
-            logger.fine(player.getUsername() + " closed GUI: " + guiId);
+            logger.fine(player.getPlayerRef().getUsername() + " closed GUI: " + guiId);
         }
     }
 

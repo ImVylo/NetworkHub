@@ -6,6 +6,7 @@ import com.hytale.networkhub.managers.HubManager;
 import com.hytale.networkhub.managers.ServerRegistryManager;
 import com.hytale.networkhub.managers.TransferManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
@@ -71,7 +72,7 @@ public class ServerShutdownListener {
             int i = 0;
 
             for (Player player : onlinePlayers) {
-                player.sendMessage("§cServer restarting, transferring to hub...");
+                player.sendMessage(Message.raw("§cServer restarting, transferring to hub..."));
 
                 futures[i++] = transferManager.transferPlayer(
                     player,
@@ -120,7 +121,7 @@ public class ServerShutdownListener {
             }
 
             for (Player player : onlinePlayers) {
-                player.sendMessage("§eYou are being transferred to the hub...");
+                player.sendMessage(Message.raw("§eYou are being transferred to the hub..."));
 
                 transferManager.transferPlayer(
                     player,

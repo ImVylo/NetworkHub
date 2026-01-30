@@ -6,6 +6,7 @@ import com.hytale.networkhub.database.DatabaseManager;
 import com.hytale.networkhub.redis.RedisManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -315,7 +316,7 @@ public class ModerationManager {
             // Find target player on this server
             Player target = null;
             for (Player player : onlinePlayers) {
-                if (player.getUniqueId().equals(targetUuid)) {
+                if (player.getPlayerRef().getUuid().equals(targetUuid)) {
                     target = player;
                     break;
                 }

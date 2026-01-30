@@ -4,6 +4,7 @@ import com.hytale.networkhub.database.models.PlayerLocation;
 import com.hytale.networkhub.managers.MessagingManager;
 import com.hytale.networkhub.managers.PlayerTrackingManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ public class MessageCommand {
      */
     public boolean execute(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /msg <player> <message>");
+            player.sendMessage(Message.raw("§cUsage: /msg <player> <message>"));
             return true;
         }
 
@@ -37,22 +38,22 @@ public class MessageCommand {
         // Find recipient
         PlayerLocation recipientLoc = trackingManager.findPlayerByName(recipientName);
         if (recipientLoc == null) {
-            player.sendMessage("§cPlayer not found: " + recipientName);
+            player.sendMessage(Message.raw("§cPlayer not found: " + recipientName);
             return true;
         }
 
         // Send message
         boolean success = messagingManager.sendDirectMessage(
-            player.getUniqueId(),
-            player.getUsername(),
+            player.getPlayerRef().getUuid(),
+            player.getPlayerRef().getUsername(),
             recipientLoc.getPlayerUuid(),
             message
         );
 
         if (success) {
-            player.sendMessage(String.format("§d[To %s] §f%s", recipientName, message));
+            player.sendMessage(Message.raw(String.format("§d[To %s] §f%s", recipientName, message));
         } else {
-            player.sendMessage("§cFailed to send message");
+            player.sendMessage(Message.raw("§cFailed to send message"));
         }
 
         return true;

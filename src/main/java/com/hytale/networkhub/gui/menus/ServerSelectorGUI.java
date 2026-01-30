@@ -7,6 +7,7 @@ import com.hytale.networkhub.managers.QueueManager;
 import com.hytale.networkhub.managers.ServerRegistryManager;
 import com.hytale.networkhub.managers.TransferManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -44,12 +45,12 @@ public class ServerSelectorGUI {
      */
     public void open(Player player) {
         if (!guiManager.isEnabled()) {
-            player.sendMessage("§cGUI system is disabled");
+            player.sendMessage(Message.raw("§cGUI system is disabled"));
             return;
         }
 
         if (!guiManager.canPlayersSelectServers()) {
-            player.sendMessage("§cServer selection is disabled");
+            player.sendMessage(Message.raw("§cServer selection is disabled"));
             return;
         }
 
@@ -57,7 +58,7 @@ public class ServerSelectorGUI {
         List<ServerRecord> servers = registryManager.getAllServers();
 
         if (servers.isEmpty()) {
-            player.sendMessage("§cNo servers available");
+            player.sendMessage(Message.raw("§cNo servers available"));
             return;
         }
 
@@ -83,13 +84,13 @@ public class ServerSelectorGUI {
     private void handleServerClick(Player player, ServerRecord server) {
         // Check if server is online
         if (server.getStatus() != ServerRecord.ServerStatus.ONLINE) {
-            player.sendMessage("§cServer " + server.getServerName() + " is offline!");
+            player.sendMessage(Message.raw("§cServer " + server.getServerName() + " is offline!");
             return;
         }
 
         // Check if player is already on this server
         if (server.getServerId().equals(config.getConfig().server.serverId)) {
-            player.sendMessage("§eYou are already on this server!");
+            player.sendMessage(Message.raw("§eYou are already on this server!"));
             return;
         }
 
@@ -101,12 +102,12 @@ public class ServerSelectorGUI {
 
         // Transfer player
         close(player);
-        player.sendMessage("§aTransferring to " + server.getServerName() + "...");
+        player.sendMessage(Message.raw("§aTransferring to " + server.getServerName() + "...");
 
         transferManager.transferPlayer(player, server, TransferManager.TransferType.COMMAND, "Server selector")
             .thenAccept(success -> {
                 if (!success) {
-                    player.sendMessage("§cFailed to transfer to " + server.getServerName());
+                    player.sendMessage(Message.raw("§cFailed to transfer to " + server.getServerName());
                 }
             });
     }
@@ -116,7 +117,7 @@ public class ServerSelectorGUI {
      */
     private void handleFullServer(Player player, ServerRecord server) {
         if (!config.getConfig().queue.enabled) {
-            player.sendMessage("§cServer " + server.getServerName() + " is full!");
+            player.sendMessage(Message.raw("§cServer " + server.getServerName() + " is full!");
             return;
         }
 
@@ -127,13 +128,13 @@ public class ServerSelectorGUI {
             //     priority = config.getConfig().queue.vipPriority;
             // }
 
-            queueManager.joinQueue(player.getUniqueId(), server.getServerId(), priority);
-            player.sendMessage(String.format("§eServer is full! You've been added to the queue for §a%s",
+            queueManager.joinQueue(player.getPlayerRef().getUuid(), server.getServerId(), priority);
+            player.sendMessage(Message.raw(String.format("§eServer is full! You've been added to the queue for §a%s",
                 server.getServerName()));
             close(player);
         } else {
             // Prompt player to manually join queue
-            player.sendMessage(String.format("§cServer %s is full! Use §e/queue join %s §cto join the queue",
+            player.sendMessage(Message.raw(String.format("§cServer %s is full! Use §e/queue join %s §cto join the queue",
                 server.getServerName(), server.getServerId()));
         }
     }
@@ -142,9 +143,9 @@ public class ServerSelectorGUI {
      * Display server list as chat (fallback until GUI API is available)
      */
     private void displayServerList(Player player, List<ServerRecord> servers) {
-        player.sendMessage("§8§m--------------------");
-        player.sendMessage("§6§lNetwork Servers");
-        player.sendMessage("§8§m--------------------");
+        player.sendMessage(Message.raw("§8§m--------------------"));
+        player.sendMessage(Message.raw("§6§lNetwork Servers"));
+        player.sendMessage(Message.raw("§8§m--------------------"));
 
         for (ServerRecord server : servers) {
             String statusColor = getStatusColor(server);
@@ -156,7 +157,7 @@ public class ServerSelectorGUI {
 
             String serverType = server.isHub() ? "HUB" : server.getServerType();
 
-            player.sendMessage(String.format("%s%s [%s] %s %s %s",
+            player.sendMessage(Message.raw(String.format("%s%s [%s] %s %s %s",
                 statusColor,
                 statusIcon,
                 serverType,
@@ -165,9 +166,9 @@ public class ServerSelectorGUI {
                 getServerNote(server)));
         }
 
-        player.sendMessage("§8§m--------------------");
-        player.sendMessage("§7Click a server to join (GUI coming soon)");
-        player.sendMessage("§7Or use: §e/transfer <server>");
+        player.sendMessage(Message.raw("§8§m--------------------"));
+        player.sendMessage(Message.raw("§7Click a server to join (GUI coming soon)"));
+        player.sendMessage(Message.raw("§7Or use: §e/transfer <server>"));
     }
 
     /**

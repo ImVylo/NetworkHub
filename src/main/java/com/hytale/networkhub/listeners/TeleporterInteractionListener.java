@@ -5,6 +5,7 @@ import com.hytale.networkhub.database.models.ServerRecord;
 import com.hytale.networkhub.database.models.TeleporterData;
 import com.hytale.networkhub.managers.*;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.Map;
 import java.util.UUID;
@@ -34,7 +35,7 @@ public class TeleporterInteractionListener {
     }
 
     public void onPlayerMove(Player player, String worldName, int x, int y, int z) {
-        UUID playerUuid = player.getUniqueId();
+        UUID playerUuid = player.getPlayerRef().getUuid();
         String currentPos = makePos(worldName, x, y, z);
         String lastPos = lastBlockPosition.get(playerUuid);
 
@@ -77,13 +78,13 @@ public class TeleporterInteractionListener {
     }
 
     private void startTeleport(Player player, TeleporterData teleporter) {
-        UUID playerUuid = player.getUniqueId();
+        UUID playerUuid = player.getPlayerRef().getUuid();
 
         // Check permission
         if (teleporter.getPermission() != null && !teleporter.getPermission().isEmpty()) {
             // TODO: Check if player has permission
             // if (!player.hasPermission(teleporter.getPermission())) {
-            //     player.sendMessage("You don't have permission to use this teleporter");
+            //     player.sendMessage(Message.raw("You don't have permission to use this teleporter"));
             //     return;
             // }
         }
@@ -91,20 +92,20 @@ public class TeleporterInteractionListener {
         // Check cooldown
         if (teleporterManager.hasCooldown(playerUuid, teleporter.getTeleporterId())) {
             long remaining = teleporterManager.getRemainingCooldown(playerUuid, teleporter.getTeleporterId());
-            player.sendMessage("§cTeleporter on cooldown: " + remaining + " seconds remaining");
+            player.sendMessage(Message.raw("§cTeleporter on cooldown: " + remaining + " seconds remaining");
             return;
         }
 
         // Get destination server
         ServerRecord destination = registryManager.getServerById(teleporter.getDestinationServerId());
         if (destination == null) {
-            player.sendMessage("§cDestination server not found");
+            player.sendMessage(Message.raw("§cDestination server not found"));
             logger.warning("Teleporter points to unknown server: " + teleporter.getDestinationServerId());
             return;
         }
 
         if (destination.getStatus() != ServerRecord.ServerStatus.ONLINE) {
-            player.sendMessage("§cDestination server is offline");
+            player.sendMessage(Message.raw("§cDestination server is offline"));
             return;
         }
 
@@ -113,10 +114,10 @@ public class TeleporterInteractionListener {
             if (config.getConfig().queue.autoJoinOnFull) {
                 int priority = 0; // TODO: Check if player has VIP
                 queueManager.joinQueue(playerUuid, destination.getServerId(), priority);
-                player.sendMessage("§eServer is full. You have been added to the queue.");
+                player.sendMessage(Message.raw("§eServer is full. You have been added to the queue."));
                 return;
             } else {
-                player.sendMessage("§cDestination server is full");
+                player.sendMessage(Message.raw("§cDestination server is full"));
                 return;
             }
         }
@@ -127,7 +128,7 @@ public class TeleporterInteractionListener {
         pendingTeleports.put(playerUuid, pending);
 
         showInitial(player, destination.getServerName(), delay);
-        logger.info("Player " + player.getUsername() + " stepped on teleporter to " + destination.getServerName());
+        logger.info("Player " + player.getPlayerRef().getUsername() + " stepped on teleporter to " + destination.getServerName());
     }
 
     private void executeTeleport(Player player, PendingTeleport pending) {
@@ -136,7 +137,7 @@ public class TeleporterInteractionListener {
 
             // Apply cooldown
             if (pending.teleporter.getCooldownSeconds() > 0) {
-                teleporterManager.applyCooldown(player.getUniqueId(),
+                teleporterManager.applyCooldown(player.getPlayerRef().getUuid(),
                     pending.teleporter.getTeleporterId(),
                     pending.teleporter.getCooldownSeconds());
             }
@@ -155,25 +156,25 @@ public class TeleporterInteractionListener {
     }
 
     private void showInitial(Player player, String destination, int seconds) {
-        player.sendMessage("§a§lTeleporting to " + destination);
-        player.sendMessage("§7Stand still for " + seconds + " seconds...");
+        player.sendMessage(Message.raw("§a§lTeleporting to " + destination);
+        player.sendMessage(Message.raw("§7Stand still for " + seconds + " seconds...");
     }
 
     private void showCountdown(Player player, String destination, int seconds) {
-        player.sendMessage("§e§lTeleporting to " + destination + " in " + seconds + " second" +
+        player.sendMessage(Message.raw("§e§lTeleporting to " + destination + " in " + seconds + " second" +
             (seconds == 1 ? "" : "s") + "...");
     }
 
     private void showSuccess(Player player, String destination) {
-        player.sendMessage("§a§lTeleporting to " + destination + "!");
+        player.sendMessage(Message.raw("§a§lTeleporting to " + destination + "!");
     }
 
     private void showCanceled(Player player) {
-        player.sendMessage("§c§lTeleport canceled - you moved!");
+        player.sendMessage(Message.raw("§c§lTeleport canceled - you moved!"));
     }
 
     private void showError(Player player) {
-        player.sendMessage("§c§lTeleport failed - please try again");
+        player.sendMessage(Message.raw("§c§lTeleport failed - please try again"));
     }
 
     private String makePos(String world, int x, int y, int z) {

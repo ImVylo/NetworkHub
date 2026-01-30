@@ -1,6 +1,7 @@
 package com.hytale.networkhub.gui.hud;
 
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.Collection;
 import java.util.logging.Logger;

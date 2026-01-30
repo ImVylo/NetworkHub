@@ -3,6 +3,7 @@ package com.hytale.networkhub.commands;
 import com.hytale.networkhub.config.NetworkConfig;
 import com.hytale.networkhub.gui.menus.AnnouncementCreatorGUI;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 
@@ -27,13 +28,13 @@ public class AnnounceCommand {
      */
     public boolean execute(Player player, String[] args) {
         if (!config.getConfig().announcements.enabled) {
-            player.sendMessage("§cAnnouncement system is disabled");
+            player.sendMessage(Message.raw("§cAnnouncement system is disabled"));
             return true;
         }
 
         // TODO: Check permission
         // if (!player.hasPermission("networkhub.announce")) {
-        //     player.sendMessage("§cYou don't have permission to create announcements");
+        //     player.sendMessage(Message.raw("§cYou don't have permission to create announcements"));
         //     return true;
         // }
 

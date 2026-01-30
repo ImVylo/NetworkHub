@@ -2,6 +2,7 @@ package com.hytale.networkhub.commands;
 
 import com.hytale.networkhub.gui.menus.ServerSelectorGUI;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 

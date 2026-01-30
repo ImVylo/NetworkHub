@@ -4,6 +4,7 @@ import com.hytale.networkhub.database.models.PlayerLocation;
 import com.hytale.networkhub.managers.MessagingManager;
 import com.hytale.networkhub.managers.PlayerTrackingManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -28,38 +29,38 @@ public class ReplyCommand {
      */
     public boolean execute(Player player, String[] args) {
         if (args.length < 1) {
-            player.sendMessage("§cUsage: /reply <message>");
+            player.sendMessage(Message.raw("§cUsage: /reply <message>"));
             return true;
         }
 
         String message = String.join(" ", args);
 
         // Get last conversation partner
-        UUID recipientUuid = messagingManager.getLastConversationPartner(player.getUniqueId());
+        UUID recipientUuid = messagingManager.getLastConversationPartner(player.getPlayerRef().getUuid());
         if (recipientUuid == null) {
-            player.sendMessage("§cNo one to reply to");
+            player.sendMessage(Message.raw("§cNo one to reply to"));
             return true;
         }
 
         // Find recipient
         PlayerLocation recipientLoc = trackingManager.findPlayer(recipientUuid);
         if (recipientLoc == null) {
-            player.sendMessage("§cPlayer is no longer online");
+            player.sendMessage(Message.raw("§cPlayer is no longer online"));
             return true;
         }
 
         // Send message
         boolean success = messagingManager.sendDirectMessage(
-            player.getUniqueId(),
-            player.getUsername(),
+            player.getPlayerRef().getUuid(),
+            player.getPlayerRef().getUsername(),
             recipientUuid,
             message
         );
 
         if (success) {
-            player.sendMessage(String.format("§d[To %s] §f%s", recipientLoc.getPlayerName(), message));
+            player.sendMessage(Message.raw(String.format("§d[To %s] §f%s", recipientLoc.getPlayerName(), message));
         } else {
-            player.sendMessage("§cFailed to send message");
+            player.sendMessage(Message.raw("§cFailed to send message"));
         }
 
         return true;

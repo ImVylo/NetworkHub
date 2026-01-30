@@ -6,6 +6,7 @@ import com.hytale.networkhub.managers.MessagingManager;
 import com.hytale.networkhub.managers.QueueManager;
 import com.hytale.networkhub.managers.ServerRegistryManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,29 +58,29 @@ public class NetworkHUD {
         // TODO: Implement when permission system is available
         // if (!player.hasPermission("networkhub.hud")) return;
 
-        hudEnabled.put(player.getUniqueId(), true);
+        hudEnabled.put(player.getPlayerRef().getUuid(), true);
 
         // Create initial scoreboard
         NetworkStats stats = getNetworkStats();
         renderer.createScoreboard(player, stats);
 
-        logger.fine("Enabled network HUD for " + player.getUsername());
+        logger.fine("Enabled network HUD for " + player.getPlayerRef().getUsername());
     }
 
     /**
      * Disable HUD for a player
      */
     public void disable(Player player) {
-        hudEnabled.remove(player.getUniqueId());
+        hudEnabled.remove(player.getPlayerRef().getUuid());
         renderer.removeScoreboard(player);
-        logger.fine("Disabled network HUD for " + player.getUsername());
+        logger.fine("Disabled network HUD for " + player.getPlayerRef().getUsername());
     }
 
     /**
      * Toggle HUD for a player
      */
     public boolean toggle(Player player) {
-        if (isEnabled(player.getUniqueId())) {
+        if (isEnabled(player.getPlayerRef().getUuid())) {
             disable(player);
             return false;
         } else {
@@ -109,11 +110,11 @@ public class NetworkHUD {
 
         // Update each player's HUD
         for (Player player : onlinePlayers) {
-            if (isEnabled(player.getUniqueId())) {
+            if (isEnabled(player.getPlayerRef().getUuid())) {
                 try {
                     renderer.updateScoreboard(player, stats);
                 } catch (Exception e) {
-                    logger.warning("Failed to update HUD for " + player.getUsername() + ": " + e.getMessage());
+                    logger.warning("Failed to update HUD for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
                 }
             }
         }

@@ -5,6 +5,7 @@ import com.hytale.networkhub.database.models.TeleporterData;
 import com.hytale.networkhub.gui.GUIManager;
 import com.hytale.networkhub.managers.TeleporterManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -35,7 +36,7 @@ public class TeleporterEditorGUI {
      */
     public void open(Player player) {
         if (!guiManager.isEnabled()) {
-            player.sendMessage("§cGUI system is disabled");
+            player.sendMessage(Message.raw("§cGUI system is disabled"));
             return;
         }
 
@@ -61,16 +62,16 @@ public class TeleporterEditorGUI {
      * Display teleporter editor as chat (fallback)
      */
     private void displayTeleporterEditor(Player player, List<TeleporterData> teleporters) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lTeleporter Editor");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lTeleporter Editor"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
 
         if (teleporters.isEmpty()) {
-            player.sendMessage("§7No teleporters on this server");
+            player.sendMessage(Message.raw("§7No teleporters on this server"));
         } else {
-            player.sendMessage("§aTeleporters: §f" + teleporters.size());
+            player.sendMessage(Message.raw("§aTeleporters: §f" + teleporters.size());
             for (TeleporterData tp : teleporters) {
-                player.sendMessage(String.format("§7- §e%s §7→ §a%s §7(%d, %d, %d)",
+                player.sendMessage(Message.raw(String.format("§7- §e%s §7→ §a%s §7(%d, %d, %d)",
                     tp.getDisplayName(),
                     tp.getDestinationServerId(),
                     tp.getX(), tp.getY(), tp.getZ()
@@ -78,10 +79,10 @@ public class TeleporterEditorGUI {
             }
         }
 
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§7Commands:");
-        player.sendMessage("§e/teleporter create <server> [name]");
-        player.sendMessage("§e/teleporter remove §7(at location)");
-        player.sendMessage("§e/teleporter list");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§7Commands:"));
+        player.sendMessage(Message.raw("§e/teleporter create <server> [name]"));
+        player.sendMessage(Message.raw("§e/teleporter remove §7(at location)"));
+        player.sendMessage(Message.raw("§e/teleporter list"));
     }
 }

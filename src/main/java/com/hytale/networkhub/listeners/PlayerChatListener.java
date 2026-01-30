@@ -3,6 +3,7 @@ package com.hytale.networkhub.listeners;
 import com.hytale.networkhub.managers.ChatManager;
 import com.hytale.networkhub.managers.MessagingManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 
@@ -21,7 +22,7 @@ public class PlayerChatListener {
         // Check for global chat prefix
         if (message.startsWith("/g ")) {
             String actualMessage = message.substring(3);
-            chatManager.sendGlobalMessage(player.getUniqueId(), player.getUsername(), actualMessage);
+            chatManager.sendGlobalMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), actualMessage);
             return true; // Cancel normal chat
         }
 
@@ -29,7 +30,7 @@ public class PlayerChatListener {
         if (message.startsWith("/sc ")) {
             String actualMessage = message.substring(4);
             // TODO: Check if player has staff permission
-            chatManager.sendStaffMessage(player.getUniqueId(), player.getUsername(), actualMessage);
+            chatManager.sendStaffMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), actualMessage);
             return true; // Cancel normal chat
         }
 

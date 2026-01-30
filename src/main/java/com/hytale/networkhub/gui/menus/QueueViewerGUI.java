@@ -4,6 +4,7 @@ import com.hytale.networkhub.config.NetworkConfig;
 import com.hytale.networkhub.gui.GUIManager;
 import com.hytale.networkhub.managers.QueueManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 
@@ -33,12 +34,12 @@ public class QueueViewerGUI {
      */
     public void open(Player player) {
         if (!guiManager.isEnabled()) {
-            player.sendMessage("§cGUI system is disabled");
+            player.sendMessage(Message.raw("§cGUI system is disabled"));
             return;
         }
 
         if (!config.getConfig().queue.enabled) {
-            player.sendMessage("§cQueue system is disabled");
+            player.sendMessage(Message.raw("§cQueue system is disabled"));
             return;
         }
 
@@ -59,18 +60,18 @@ public class QueueViewerGUI {
      * Display queue viewer as chat (fallback)
      */
     private void displayQueueViewer(Player player) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lQueue Viewer");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lQueue Viewer"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
 
         int totalQueued = queueManager.getTotalQueuedPlayers();
-        player.sendMessage("§eTotal Queued Players: §f" + totalQueued);
+        player.sendMessage(Message.raw("§eTotal Queued Players: §f" + totalQueued);
 
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§7Commands:");
-        player.sendMessage("§e/queue join <server>");
-        player.sendMessage("§e/queue leave <server>");
-        player.sendMessage("§e/queue info <server>");
-        player.sendMessage("§e/queue list");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§7Commands:"));
+        player.sendMessage(Message.raw("§e/queue join <server>"));
+        player.sendMessage(Message.raw("§e/queue leave <server>"));
+        player.sendMessage(Message.raw("§e/queue info <server>"));
+        player.sendMessage(Message.raw("§e/queue list"));
     }
 }

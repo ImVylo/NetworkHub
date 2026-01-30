@@ -3,6 +3,7 @@ package com.hytale.networkhub.commands;
 import com.hytale.networkhub.database.models.PlayerLocation;
 import com.hytale.networkhub.managers.PlayerTrackingManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 
@@ -23,7 +24,7 @@ public class WhereIsCommand {
      */
     public boolean execute(Player player, String[] args) {
         if (args.length < 1) {
-            player.sendMessage("§cUsage: /whereis <player>");
+            player.sendMessage(Message.raw("§cUsage: /whereis <player>"));
             return true;
         }
 
@@ -33,23 +34,23 @@ public class WhereIsCommand {
         PlayerLocation location = trackingManager.findPlayerByName(targetName);
 
         if (location == null) {
-            player.sendMessage("§cPlayer not found: " + targetName);
+            player.sendMessage(Message.raw("§cPlayer not found: " + targetName);
             return true;
         }
 
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lPlayer Location");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§ePlayer: §f" + location.getPlayerName());
-        player.sendMessage("§eServer: §a" + location.getServerId());
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lPlayer Location"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§ePlayer: §f" + location.getPlayerName());
+        player.sendMessage(Message.raw("§eServer: §a" + location.getServerId());
 
         if (location.getWorldName() != null) {
-            player.sendMessage("§eWorld: §f" + location.getWorldName());
-            player.sendMessage(String.format("§ePosition: §f%d, %d, %d",
+            player.sendMessage(Message.raw("§eWorld: §f" + location.getWorldName());
+            player.sendMessage(Message.raw(String.format("§ePosition: §f%d, %d, %d",
                 location.getX(), location.getY(), location.getZ()));
         }
 
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
 
         return true;
     }

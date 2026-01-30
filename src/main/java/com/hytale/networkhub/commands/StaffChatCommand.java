@@ -3,6 +3,7 @@ package com.hytale.networkhub.commands;
 import com.hytale.networkhub.config.NetworkConfig;
 import com.hytale.networkhub.managers.ChatManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 
@@ -25,26 +26,26 @@ public class StaffChatCommand {
      */
     public boolean execute(Player player, String[] args) {
         if (!config.getConfig().messaging.staffChatEnabled) {
-            player.sendMessage("§cStaff chat is disabled");
+            player.sendMessage(Message.raw("§cStaff chat is disabled"));
             return true;
         }
 
         // Check permission
         // TODO: Implement when permission system is available
         // if (!player.hasPermission("networkhub.staffchat")) {
-        //     player.sendMessage("§cYou don't have permission to use staff chat");
+        //     player.sendMessage(Message.raw("§cYou don't have permission to use staff chat"));
         //     return true;
         // }
 
         if (args.length < 1) {
-            player.sendMessage("§cUsage: /sc <message>");
+            player.sendMessage(Message.raw("§cUsage: /sc <message>"));
             return true;
         }
 
         String message = String.join(" ", args);
 
         // Send to staff chat
-        chatManager.sendStaffMessage(player.getUniqueId(), player.getUsername(), message);
+        chatManager.sendStaffMessage(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername(), message);
 
         return true;
     }

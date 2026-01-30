@@ -6,6 +6,7 @@ import com.hytale.networkhub.database.models.TeleporterData;
 import com.hytale.networkhub.managers.ServerRegistryManager;
 import com.hytale.networkhub.managers.TeleporterManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -34,7 +35,7 @@ public class TeleporterCommand {
     public boolean execute(Player player, String[] args) {
         // TODO: Check permission
         // if (!player.hasPermission("networkhub.teleporter")) {
-        //     player.sendMessage("§cYou don't have permission to manage teleporters");
+        //     player.sendMessage(Message.raw("§cYou don't have permission to manage teleporters"));
         //     return true;
         // }
 
@@ -56,7 +57,7 @@ public class TeleporterCommand {
                 return listTeleporters(player);
 
             default:
-                player.sendMessage("§cUnknown subcommand: " + subcommand);
+                player.sendMessage(Message.raw("§cUnknown subcommand: " + subcommand);
                 sendHelp(player);
                 return true;
         }
@@ -66,13 +67,13 @@ public class TeleporterCommand {
      * Send help message
      */
     private void sendHelp(Player player) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lTeleporter Commands");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§e/teleporter create <server> [name] §7- Create teleporter");
-        player.sendMessage("§e/teleporter remove §7- Remove teleporter at location");
-        player.sendMessage("§e/teleporter list §7- List all teleporters");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lTeleporter Commands"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§e/teleporter create <server> [name] §7- Create teleporter"));
+        player.sendMessage(Message.raw("§e/teleporter remove §7- Remove teleporter at location"));
+        player.sendMessage(Message.raw("§e/teleporter list §7- List all teleporters"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
     }
 
     /**
@@ -80,7 +81,7 @@ public class TeleporterCommand {
      */
     private boolean createTeleporter(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /teleporter create <server> [displayName]");
+            player.sendMessage(Message.raw("§cUsage: /teleporter create <server> [displayName]"));
             return true;
         }
 
@@ -92,7 +93,7 @@ public class TeleporterCommand {
         // Validate destination server
         ServerRecord destination = registryManager.getServerById(destinationServerId);
         if (destination == null) {
-            player.sendMessage("§cServer not found: " + destinationServerId);
+            player.sendMessage(Message.raw("§cServer not found: " + destinationServerId);
             return true;
         }
 
@@ -120,7 +121,7 @@ public class TeleporterCommand {
 
         teleporterManager.createTeleporter(teleporter);
 
-        player.sendMessage(String.format("§aCreated teleporter §e%s §a→ §e%s",
+        player.sendMessage(Message.raw(String.format("§aCreated teleporter §e%s §a→ §e%s",
             displayName, destination.getServerName()));
 
         return true;
@@ -138,7 +139,7 @@ public class TeleporterCommand {
         // int z = loc.getBlockZ();
 
         // For now, send message
-        player.sendMessage("§cTeleporter removal coming soon...");
+        player.sendMessage(Message.raw("§cTeleporter removal coming soon..."));
 
         return true;
     }
@@ -151,18 +152,18 @@ public class TeleporterCommand {
             config.getConfig().server.serverId
         );
 
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lTeleporters §7(" + teleporters.size() + ")");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lTeleporters §7(" + teleporters.size() + ")");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
 
         if (teleporters.isEmpty()) {
-            player.sendMessage("§7No teleporters on this server");
+            player.sendMessage(Message.raw("§7No teleporters on this server"));
             return true;
         }
 
         for (TeleporterData tp : teleporters) {
             String status = tp.isEnabled() ? "§a✓" : "§c✗";
-            player.sendMessage(String.format("%s §e%s §7→ §a%s §7(%d, %d, %d)",
+            player.sendMessage(Message.raw(String.format("%s §e%s §7→ §a%s §7(%d, %d, %d)",
                 status,
                 tp.getDisplayName(),
                 tp.getDestinationServerId(),
@@ -170,7 +171,7 @@ public class TeleporterCommand {
             ));
         }
 
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
 
         return true;
     }

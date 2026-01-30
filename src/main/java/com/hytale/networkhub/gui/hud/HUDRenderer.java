@@ -2,6 +2,7 @@ package com.hytale.networkhub.gui.hud;
 
 import com.hytale.networkhub.config.NetworkConfig;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,13 +34,13 @@ public class HUDRenderer {
             List<String> lines = buildLines(player, stats);
 
             // Send lines as chat messages for now
-            player.sendMessage("§8§m------------------");
-            player.sendMessage("§6§lNETWORK HUD");
-            player.sendMessage("§8§m------------------");
+            player.sendMessage(Message.raw("§8§m------------------"));
+            player.sendMessage(Message.raw("§6§lNETWORK HUD"));
+            player.sendMessage(Message.raw("§8§m------------------"));
             for (String line : lines) {
-                player.sendMessage(line);
+                player.sendMessage(Message.raw(line);
             }
-            player.sendMessage("§8§m------------------");
+            player.sendMessage(Message.raw("§8§m------------------"));
 
             // TODO: Replace with actual scoreboard creation:
             // Scoreboard scoreboard = new Scoreboard("network_hud");
@@ -47,10 +48,10 @@ public class HUDRenderer {
             // objective.setDisplaySlot(DisplaySlot.SIDEBAR);
             // objective.setDisplayName("§6§lHYTALE NETWORK");
             // player.setScoreboard(scoreboard);
-            // activeScoreboards.put(player.getUniqueId(), scoreboard);
+            // activeScoreboards.put(player.getPlayerRef().getUuid(), scoreboard);
 
         } catch (Exception e) {
-            logger.warning("Failed to create scoreboard for " + player.getUsername() + ": " + e.getMessage());
+            logger.warning("Failed to create scoreboard for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
         }
     }
 
@@ -58,7 +59,7 @@ public class HUDRenderer {
      * Update an existing scoreboard with new stats
      */
     public void updateScoreboard(Player player, NetworkHUD.NetworkStats stats) {
-        Object scoreboard = activeScoreboards.get(player.getUniqueId());
+        Object scoreboard = activeScoreboards.get(player.getPlayerRef().getUuid());
         if (scoreboard == null) {
             // Scoreboard doesn't exist, create it
             createScoreboard(player, stats);
@@ -78,7 +79,7 @@ public class HUDRenderer {
             // }
 
         } catch (Exception e) {
-            logger.warning("Failed to update scoreboard for " + player.getUsername() + ": " + e.getMessage());
+            logger.warning("Failed to update scoreboard for " + player.getPlayerRef().getUsername() + ": " + e.getMessage());
         }
     }
 
@@ -86,11 +87,11 @@ public class HUDRenderer {
      * Remove a player's scoreboard
      */
     public void removeScoreboard(Player player) {
-        Object scoreboard = activeScoreboards.remove(player.getUniqueId());
+        Object scoreboard = activeScoreboards.remove(player.getPlayerRef().getUuid());
         if (scoreboard != null) {
             // TODO: Clear player's scoreboard with Hytale API
             // player.setScoreboard(null);
-            player.sendMessage("§7HUD disabled");
+            player.sendMessage(Message.raw("§7HUD disabled"));
         }
     }
 
@@ -147,7 +148,7 @@ public class HUDRenderer {
 
             case "notifications":
                 // TODO: Get unread message count
-                // int unreadMessages = messagingManager.getUnreadCount(player.getUniqueId());
+                // int unreadMessages = messagingManager.getUnreadCount(player.getPlayerRef().getUuid());
                 // if (unreadMessages > 0) {
                 //     return String.format("§8[§6!§8] §f%d new msg%s",
                 //         unreadMessages, unreadMessages == 1 ? "" : "s");

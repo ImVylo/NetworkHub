@@ -3,6 +3,7 @@ package com.hytale.networkhub.gui.menus;
 import com.hytale.networkhub.config.NetworkConfig;
 import com.hytale.networkhub.gui.GUIManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.logging.Logger;
 
@@ -46,13 +47,13 @@ public class AdminPanelGUI {
      */
     public void open(Player player) {
         if (!guiManager.isEnabled()) {
-            player.sendMessage("§cGUI system is disabled");
+            player.sendMessage(Message.raw("§cGUI system is disabled"));
             return;
         }
 
         // TODO: Check admin permission
         // if (!player.hasPermission("networkhub.admin")) {
-        //     player.sendMessage("§cYou don't have permission to access the admin panel");
+        //     player.sendMessage(Message.raw("§cYou don't have permission to access the admin panel"));
         //     return;
         // }
 
@@ -76,33 +77,33 @@ public class AdminPanelGUI {
      * Display admin menu as chat (fallback)
      */
     private void displayAdminMenu(Player player) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lNetworkHub Admin Panel");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("");
-        player.sendMessage("§e[1] §aServer Management");
-        player.sendMessage("   §7Configure servers, hubs, priorities");
-        player.sendMessage("");
-        player.sendMessage("§e[2] §aPlayer Management");
-        player.sendMessage("   §7Transfer players, track locations");
-        player.sendMessage("");
-        player.sendMessage("§e[3] §aTeleporter Editor");
-        player.sendMessage("   §7Create and edit teleporters");
-        player.sendMessage("");
-        player.sendMessage("§e[4] §aQueue Viewer");
-        player.sendMessage("   §7View and manage server queues");
-        player.sendMessage("");
-        player.sendMessage("§e[5] §aAnnouncements");
-        player.sendMessage("   §7Create network-wide announcements");
-        player.sendMessage("");
-        player.sendMessage("§e[6] §aNetwork Status");
-        player.sendMessage("   §7View health and statistics");
-        player.sendMessage("");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§7Use commands until GUI is fully implemented:");
-        player.sendMessage("§e/network listservers §7- View all servers");
-        player.sendMessage("§e/network sethub <server> §7- Set hub");
-        player.sendMessage("§e/network transfer <player> <server> §7- Transfer");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lNetworkHub Admin Panel"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw(""));
+        player.sendMessage(Message.raw("§e[1] §aServer Management"));
+        player.sendMessage(Message.raw("   §7Configure servers, hubs, priorities"));
+        player.sendMessage(Message.raw(""));
+        player.sendMessage(Message.raw("§e[2] §aPlayer Management"));
+        player.sendMessage(Message.raw("   §7Transfer players, track locations"));
+        player.sendMessage(Message.raw(""));
+        player.sendMessage(Message.raw("§e[3] §aTeleporter Editor"));
+        player.sendMessage(Message.raw("   §7Create and edit teleporters"));
+        player.sendMessage(Message.raw(""));
+        player.sendMessage(Message.raw("§e[4] §aQueue Viewer"));
+        player.sendMessage(Message.raw("   §7View and manage server queues"));
+        player.sendMessage(Message.raw(""));
+        player.sendMessage(Message.raw("§e[5] §aAnnouncements"));
+        player.sendMessage(Message.raw("   §7Create network-wide announcements"));
+        player.sendMessage(Message.raw(""));
+        player.sendMessage(Message.raw("§e[6] §aNetwork Status"));
+        player.sendMessage(Message.raw("   §7View health and statistics"));
+        player.sendMessage(Message.raw(""));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§7Use commands until GUI is fully implemented:"));
+        player.sendMessage(Message.raw("§e/network listservers §7- View all servers"));
+        player.sendMessage(Message.raw("§e/network sethub <server> §7- Set hub"));
+        player.sendMessage(Message.raw("§e/network transfer <player> <server> §7- Transfer"));
     }
 
     /**
@@ -141,7 +142,7 @@ public class AdminPanelGUI {
                 break;
 
             default:
-                player.sendMessage("§cInvalid option");
+                player.sendMessage(Message.raw("§cInvalid option"));
         }
     }
 
@@ -150,11 +151,11 @@ public class AdminPanelGUI {
      */
     private void displayNetworkStatus(Player player) {
         // TODO: Gather and display comprehensive network stats
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lNetwork Status");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§7Status information coming soon...");
-        player.sendMessage("§7Use §e/network listservers §7for now");
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lNetwork Status"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§7Status information coming soon..."));
+        player.sendMessage(Message.raw("§7Use §e/network listservers §7for now"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
     }
 }

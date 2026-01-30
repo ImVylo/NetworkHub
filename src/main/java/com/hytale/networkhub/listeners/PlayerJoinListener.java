@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.hytale.networkhub.managers.PlayerTrackingManager;
 import com.hytale.networkhub.redis.RedisManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,20 +29,20 @@ public class PlayerJoinListener {
     public void onPlayerJoin(Player player) {
         try {
             // Track in database
-            trackingManager.trackJoin(player.getUniqueId(), player.getUsername());
+            trackingManager.trackJoin(player.getPlayerRef().getUuid(), player.getPlayerRef().getUsername());
 
             // Publish to Redis for real-time updates
             if (redisManager.isEnabled()) {
                 Map<String, Object> message = new HashMap<>();
-                message.put("playerUuid", player.getUniqueId().toString());
-                message.put("playerName", player.getUsername());
+                message.put("playerUuid", player.getPlayerRef().getUuid().toString());
+                message.put("playerName", player.getPlayerRef().getUsername());
                 message.put("serverId", serverId);
                 message.put("timestamp", System.currentTimeMillis());
 
                 redisManager.publish(redisManager.getChannel("playerJoin"), message);
             }
 
-            logger.fine("Player joined: " + player.getUsername());
+            logger.fine("Player joined: " + player.getPlayerRef().getUsername());
 
         } catch (Exception e) {
             logger.severe("Error handling player join: " + e.getMessage());

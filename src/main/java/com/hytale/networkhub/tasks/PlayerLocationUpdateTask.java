@@ -20,7 +20,7 @@ public class PlayerLocationUpdateTask implements Runnable {
             for (Player player : onlinePlayers) {
                 if (player != null && player.isOnline()) {
                     // TODO: Get actual world and position from player
-                    // trackingManager.updateLocation(player.getUniqueId(), worldName, x, y, z);
+                    // trackingManager.updateLocation(player.getPlayerRef().getUuid(), worldName, x, y, z);
                 }
             }
         } catch (Exception e) {

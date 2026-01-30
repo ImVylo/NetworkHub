@@ -5,6 +5,7 @@ import com.hytale.networkhub.database.models.Announcement;
 import com.hytale.networkhub.gui.GUIManager;
 import com.hytale.networkhub.managers.AnnouncementManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.Message;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -36,18 +37,18 @@ public class AnnouncementCreatorGUI {
      */
     public void open(Player player) {
         if (!guiManager.isEnabled()) {
-            player.sendMessage("§cGUI system is disabled");
+            player.sendMessage(Message.raw("§cGUI system is disabled"));
             return;
         }
 
         if (!config.getConfig().announcements.enabled) {
-            player.sendMessage("§cAnnouncement system is disabled");
+            player.sendMessage(Message.raw("§cAnnouncement system is disabled"));
             return;
         }
 
         // TODO: Check permission
         // if (!player.hasPermission("networkhub.announce")) {
-        //     player.sendMessage("§cYou don't have permission to create announcements");
+        //     player.sendMessage(Message.raw("§cYou don't have permission to create announcements"));
         //     return;
         // }
 
@@ -68,24 +69,24 @@ public class AnnouncementCreatorGUI {
      * Display announcement creator as chat (fallback)
      */
     private void displayAnnouncementCreator(Player player) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lAnnouncement Creator");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§7Create network-wide announcements");
-        player.sendMessage("");
-        player.sendMessage("§eDisplay Types:");
-        player.sendMessage("§7- TITLE: Large centered text");
-        player.sendMessage("§7- SUBTITLE: Smaller subtitle text");
-        player.sendMessage("§7- ACTIONBAR: Text above hotbar");
-        player.sendMessage("§7- POPUP: Custom popup GUI");
-        player.sendMessage("§7- ALL: Combination of all");
-        player.sendMessage("");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§7Command (quick announcement):");
-        player.sendMessage("§e/announce <message>");
-        player.sendMessage("");
-        player.sendMessage("§7For advanced options, use the GUI");
-        player.sendMessage("§7when it's fully implemented");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lAnnouncement Creator"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§7Create network-wide announcements"));
+        player.sendMessage(Message.raw(""));
+        player.sendMessage(Message.raw("§eDisplay Types:"));
+        player.sendMessage(Message.raw("§7- TITLE: Large centered text"));
+        player.sendMessage(Message.raw("§7- SUBTITLE: Smaller subtitle text"));
+        player.sendMessage(Message.raw("§7- ACTIONBAR: Text above hotbar"));
+        player.sendMessage(Message.raw("§7- POPUP: Custom popup GUI"));
+        player.sendMessage(Message.raw("§7- ALL: Combination of all"));
+        player.sendMessage(Message.raw(""));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§7Command (quick announcement):"));
+        player.sendMessage(Message.raw("§e/announce <message>"));
+        player.sendMessage(Message.raw(""));
+        player.sendMessage(Message.raw("§7For advanced options, use the GUI"));
+        player.sendMessage(Message.raw("§7when it's fully implemented"));
     }
 
     /**
@@ -93,8 +94,8 @@ public class AnnouncementCreatorGUI {
      */
     public void createQuickAnnouncement(Player player, String message) {
         Announcement announcement = new Announcement();
-        announcement.setCreatorUuid(player.getUniqueId());
-        announcement.setCreatorName(player.getUsername());
+        announcement.setCreatorUuid(player.getPlayerRef().getUuid());
+        announcement.setCreatorName(player.getPlayerRef().getUsername());
         announcement.setTitle(message);
         announcement.setDisplayType(Announcement.DisplayType.TITLE);
         announcement.setTargetServers(new ArrayList<>()); // All servers
@@ -103,9 +104,9 @@ public class AnnouncementCreatorGUI {
 
         try {
             announcementManager.createAnnouncement(announcement);
-            player.sendMessage("§aAnnouncement sent to all servers!");
+            player.sendMessage(Message.raw("§aAnnouncement sent to all servers!"));
         } catch (Exception e) {
-            player.sendMessage("§cFailed to create announcement: " + e.getMessage());
+            player.sendMessage(Message.raw("§cFailed to create announcement: " + e.getMessage());
             logger.warning("Failed to create announcement: " + e.getMessage());
         }
     }
@@ -114,15 +115,15 @@ public class AnnouncementCreatorGUI {
      * Preview an announcement (show to creator only)
      */
     public void previewAnnouncement(Player player, Announcement announcement) {
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§6§lAnnouncement Preview");
-        player.sendMessage("§8§m-------------------------");
-        player.sendMessage("§eTitle: §f" + announcement.getTitle());
-        player.sendMessage("§eSubtitle: §f" + announcement.getSubtitle());
-        player.sendMessage("§eAction Bar: §f" + announcement.getActionBar());
-        player.sendMessage("§eDisplay Type: §f" + announcement.getDisplayType());
-        player.sendMessage("§eDuration: §f" + announcement.getDurationSeconds() + "s");
-        player.sendMessage("§ePriority: §f" + announcement.getPriority());
-        player.sendMessage("§8§m-------------------------");
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§6§lAnnouncement Preview"));
+        player.sendMessage(Message.raw("§8§m-------------------------"));
+        player.sendMessage(Message.raw("§eTitle: §f" + announcement.getTitle());
+        player.sendMessage(Message.raw("§eSubtitle: §f" + announcement.getSubtitle());
+        player.sendMessage(Message.raw("§eAction Bar: §f" + announcement.getActionBar());
+        player.sendMessage(Message.raw("§eDisplay Type: §f" + announcement.getDisplayType());
+        player.sendMessage(Message.raw("§eDuration: §f" + announcement.getDurationSeconds() + "s");
+        player.sendMessage(Message.raw("§ePriority: §f" + announcement.getPriority());
+        player.sendMessage(Message.raw("§8§m-------------------------"));
     }
 }
