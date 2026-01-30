@@ -76,7 +76,7 @@ public class NetworkHub extends JavaPlugin {
             gson = new Gson();
 
             // Load configurations
-            Path configPath = getFile().getParent().resolve("config");
+            Path configPath = getFile().getParent().resolve("NetworkHub");
             config = new NetworkConfig(getLogger(), configPath);
             config.load();
             getLogger().at(Level.INFO).log("Configuration loaded for server: %s", config.getConfig().server.serverId);
