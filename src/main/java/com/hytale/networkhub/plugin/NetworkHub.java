@@ -192,9 +192,19 @@ public class NetworkHub extends JavaPlugin {
 
             getLogger().at(Level.INFO).log("Scheduled tasks started");
 
-            // TODO: Register commands
-            // TODO: Register event listeners
-            // TODO: Subscribe to Redis channels
+            // Register commands
+            registerCommands();
+            getLogger().at(Level.INFO).log("Commands registered");
+
+            // Register event listeners
+            registerListeners();
+            getLogger().at(Level.INFO).log("Event listeners registered");
+
+            // Subscribe to Redis channels
+            if (redisManager != null) {
+                subscribeToRedisChannels();
+                getLogger().at(Level.INFO).log("Subscribed to Redis channels");
+            }
 
             getLogger().at(Level.INFO).log("NetworkHub started successfully!");
 
@@ -245,6 +255,58 @@ public class NetworkHub extends JavaPlugin {
         } catch (Exception e) {
             getLogger().at(Level.SEVERE).withCause(e).log("Error during NetworkHub shutdown");
         }
+    }
+
+    // === Command and Listener Registration ===
+
+    private void registerCommands() {
+        // TODO: Implement command wrappers for Hytale's command system
+        // Commands need to extend AbstractCommand or AbstractCommandCollection
+        getLogger().at(Level.WARNING).log("Command registration not yet implemented - commands will not work");
+    }
+
+    private void registerListeners() {
+        // TODO: Implement event listener registration
+        // Use getEventRegistry().register() or registerGlobal()
+        getLogger().at(Level.WARNING).log("Event listener registration not yet implemented - listeners will not work");
+    }
+
+    private void subscribeToRedisChannels() {
+        // Subscribe to all Redis channels for cross-server communication
+        if (redisManager == null) return;
+
+        // Subscribe to Redis channels
+        redisManager.subscribe("player:join", message -> {
+            // Handle player join notifications from other servers
+        });
+
+        redisManager.subscribe("player:quit", message -> {
+            // Handle player quit notifications from other servers
+        });
+
+        redisManager.subscribe("chat:global", message -> {
+            // Handle global chat messages
+        });
+
+        redisManager.subscribe("chat:staff", message -> {
+            // Handle staff chat messages
+        });
+
+        redisManager.subscribe("chat:dm", message -> {
+            // Handle direct messages
+        });
+
+        redisManager.subscribe("server:status", message -> {
+            // Handle server status updates
+        });
+
+        redisManager.subscribe("transfer:request", message -> {
+            // Handle remote transfer requests
+        });
+
+        redisManager.subscribe("announcement", message -> {
+            // Handle network-wide announcements
+        });
     }
 
     // === Getters ===
